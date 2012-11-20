@@ -1,6 +1,8 @@
 package wci.junittest;
 
 import static org.junit.Assert.*;
+import static wci.intermediate.symtabimpl.SymTabKeyImpl.ROUTINE_ICODE;
+import static wci.intermediate.symtabimpl.SymTabKeyImpl.ROUTINE_SYMTAB;
 
 import java.io.BufferedReader;
 import java.io.StringReader;
@@ -17,6 +19,7 @@ import wci.intermediate.symtabimpl.DefinitionImpl;
 import wci.intermediate.symtabimpl.SymTabKeyImpl;
 import wci.intermediate.symtabimpl.TrianglePredefined;
 import wci.intermediate.typeimpl.TypeFormImpl;
+import wci.util.ParseTreePrinter;
 
 public class VnameTest {
 
@@ -49,19 +52,31 @@ public class VnameTest {
 				};
 		SymTabStack symTabStack = parser.getSymTabStack();
 		TrianglePredefined.initialize(symTabStack);
-		symTabStack.push();
+		ICode iCode = ICodeFactory.createICode();
+		// Create a dummy program identifier symbol table entry.
+        SymTabEntry routineId = symTabStack.enterLocal("DummyProgramName".toLowerCase());
+        routineId.setDefinition(DefinitionImpl.PROGRAM);
+        symTabStack.setProgramId(routineId);
+
+        // Push a new symbol table onto the symbol table stack and set
+        // the routine's symbol table and intermediate code.
+        routineId.setAttribute(ROUTINE_SYMTAB, symTabStack.push());
+		routineId.setAttribute(ROUTINE_ICODE, iCode);
+		ParseTreePrinter treePrinter = new ParseTreePrinter(System.out);
+		
 		for (String s : code) {
 			StringReader st = new StringReader(s);
 			BufferedReader bf = new BufferedReader(st);
-
+			
 			try {
 				Source source = new Source(bf);
 				source.addMessageListener(new SourceMessageListener());
 				parser = new TriangleParserTD(new TriangleScanner(source));
 				setUpSymbolTable();
 				VnameParser vname = new VnameParser(parser);
-				vname.parse(parser.getScanner().nextToken());
-				//assertEquals(pep.getErrorCount(),1);
+				ICodeNode node = vname.parse(parser.getScanner().nextToken());
+				iCode.setRoot(node);
+				treePrinter.print(symTabStack);
 			} catch (Exception e) {
 				System.out.println(e.getMessage());
 			}
