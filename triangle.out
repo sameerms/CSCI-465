@@ -1,0 +1,157 @@
+001 ! Tokens for Triangle Scanner
+002 ! This is a comment
+003 ! This is a coment with various Graphic !@)(!#(*$)%&%&(_)(?:":"}{{P~`+_-|
+004 
+005 ! integer literal
+006 398450
+>>> INTEGER         line=006, pos= 0, text="398450"
+>>>                 value=398450
+007 8904854
+>>> INTEGER         line=007, pos= 0, text="8904854"
+>>>                 value=8904854
+008 
+009 !character literal
+010 '1' '@' '#' '"' '(' '+' '{' 'd' ' ' '	'
+>>> CHAR            line=010, pos= 0, text="'1'"
+>>>                 value='1'
+>>> CHAR            line=010, pos= 4, text="'@'"
+>>>                 value='@'
+>>> CHAR            line=010, pos= 8, text="'#'"
+>>>                 value='#'
+>>> CHAR            line=010, pos=12, text="'"'"
+>>>                 value='"'
+>>> CHAR            line=010, pos=16, text="'('"
+>>>                 value='('
+>>> CHAR            line=010, pos=20, text="'+'"
+>>>                 value='+'
+>>> CHAR            line=010, pos=24, text="'{'"
+>>>                 value='{'
+>>> CHAR            line=010, pos=28, text="'d'"
+>>>                 value='d'
+>>> CHAR            line=010, pos=32, text="' '"
+>>>                 value=' '
+>>> CHAR            line=010, pos=36, text="' '"
+>>>                 value=' '
+011 
+012 ! Identifier
+013 hello world HELLO hellO HellO
+>>> IDENTIFIER      line=013, pos= 0, text="hello"
+>>> IDENTIFIER      line=013, pos= 6, text="world"
+>>> IDENTIFIER      line=013, pos=12, text="HELLO"
+>>> IDENTIFIER      line=013, pos=18, text="hellO"
+>>> IDENTIFIER      line=013, pos=24, text="HellO"
+014 
+015 !mixed integer literal and identifier
+016 34359goodbye498
+    ^
+*** Invalid number [at "34359"]
+017 traingle4586
+>>> IDENTIFIER      line=017, pos= 0, text="traingle4586"
+018 
+019 ! Key words
+020 array begin const do else end func if in let of proc record then type var while
+>>> ARRAY           line=020, pos= 0, text="array"
+>>> BEGIN           line=020, pos= 6, text="begin"
+>>> CONST           line=020, pos=12, text="const"
+>>> DO              line=020, pos=18, text="do"
+>>> ELSE            line=020, pos=21, text="else"
+>>> END             line=020, pos=26, text="end"
+>>> FUNC            line=020, pos=30, text="func"
+>>> IF              line=020, pos=35, text="if"
+>>> IN              line=020, pos=38, text="in"
+>>> LET             line=020, pos=41, text="let"
+>>> OF              line=020, pos=45, text="of"
+>>> PROC            line=020, pos=48, text="proc"
+>>> RECORD          line=020, pos=53, text="record"
+>>> THEN            line=020, pos=60, text="then"
+>>> TYPE            line=020, pos=65, text="type"
+>>> VAR             line=020, pos=70, text="var"
+>>> WHILE           line=020, pos=74, text="while"
+021 
+022 ! NOT keywords, but identifiers
+023 Array BEGIN CONST Do Else End FUNC IF IN Let OF Proc Record THEN TYPE vAr WhiLE
+>>> IDENTIFIER      line=023, pos= 0, text="Array"
+>>> IDENTIFIER      line=023, pos= 6, text="BEGIN"
+>>> IDENTIFIER      line=023, pos=12, text="CONST"
+>>> IDENTIFIER      line=023, pos=18, text="Do"
+>>> IDENTIFIER      line=023, pos=21, text="Else"
+>>> IDENTIFIER      line=023, pos=26, text="End"
+>>> IDENTIFIER      line=023, pos=30, text="FUNC"
+>>> IDENTIFIER      line=023, pos=35, text="IF"
+>>> IDENTIFIER      line=023, pos=38, text="IN"
+>>> IDENTIFIER      line=023, pos=41, text="Let"
+>>> IDENTIFIER      line=023, pos=45, text="OF"
+>>> IDENTIFIER      line=023, pos=48, text="Proc"
+>>> IDENTIFIER      line=023, pos=53, text="Record"
+>>> IDENTIFIER      line=023, pos=60, text="THEN"
+>>> IDENTIFIER      line=023, pos=65, text="TYPE"
+>>> IDENTIFIER      line=023, pos=70, text="vAr"
+>>> IDENTIFIER      line=023, pos=74, text="WhiLE"
+024 
+025 !Special symbol tokens
+026 . : ; , := ~ ( ) [ ] { }
+>>> DOT             line=026, pos= 0, text="."
+>>> COLON           line=026, pos= 2, text=":"
+>>> SEMICOLON       line=026, pos= 4, text=";"
+>>> COMMA           line=026, pos= 6, text=","
+>>> COLON_EQUALS    line=026, pos= 8, text=":="
+>>> TILDA           line=026, pos=11, text="~"
+>>> LEFT_PAREN      line=026, pos=13, text="("
+>>> RIGHT_PAREN     line=026, pos=15, text=")"
+>>> LEFT_BRACKET    line=026, pos=17, text="["
+>>> RIGHT_BRACKET   line=026, pos=19, text="]"
+>>> LEFT_BRACE      line=026, pos=21, text="{"
+>>> RIGHT_BRACE     line=026, pos=23, text="}"
+027 
+028 
+029 !operators
+030 + - * / = < > \ & % ^ ?
+>>> PLUS            line=030, pos= 0, text="+"
+>>> MINUS           line=030, pos= 2, text="-"
+>>> STAR            line=030, pos= 4, text="*"
+>>> SLASH           line=030, pos= 6, text="/"
+>>> EQUALS          line=030, pos= 8, text="="
+>>> LESS_THAN       line=030, pos=10, text="<"
+>>> GREATER_THAN    line=030, pos=12, text=">"
+>>> BACK_SLASH      line=030, pos=14, text="\"
+>>> AMPERSAND       line=030, pos=16, text="&"
+>>> PERCENT         line=030, pos=18, text="%"
+>>> CIRCUMFLEX      line=030, pos=20, text="^"
+>>> QUESTION_MARK   line=030, pos=22, text="?"
+031 
+032 ! more operators
+033 ++ -- += *= \= \/ /\ && ^= ?? ?= \? /|\ /\/\
+>>> PLUS            line=033, pos= 0, text="+"
+>>> PLUS            line=033, pos= 1, text="+"
+>>> MINUS           line=033, pos= 3, text="-"
+>>> MINUS           line=033, pos= 4, text="-"
+>>> PLUS            line=033, pos= 6, text="+"
+>>> EQUALS          line=033, pos= 7, text="="
+>>> STAR            line=033, pos= 9, text="*"
+>>> EQUALS          line=033, pos=10, text="="
+>>> NOT_EQUALS      line=033, pos=12, text="\="
+>>> OR              line=033, pos=15, text="\/"
+>>> AND             line=033, pos=18, text="/\"
+>>> AMPERSAND       line=033, pos=21, text="&"
+>>> AMPERSAND       line=033, pos=22, text="&"
+>>> CIRCUMFLEX      line=033, pos=24, text="^"
+>>> EQUALS          line=033, pos=25, text="="
+>>> QUESTION_MARK   line=033, pos=27, text="?"
+>>> QUESTION_MARK   line=033, pos=28, text="?"
+>>> QUESTION_MARK   line=033, pos=30, text="?"
+>>> EQUALS          line=033, pos=31, text="="
+>>> BACK_SLASH      line=033, pos=33, text="\"
+>>> QUESTION_MARK   line=033, pos=34, text="?"
+>>> SLASH           line=033, pos=36, text="/"
+>>> PIPE            line=033, pos=37, text="|"
+>>> BACK_SLASH      line=033, pos=38, text="\"
+>>> AND             line=033, pos=40, text="/\"
+>>> AND             line=033, pos=42, text="/\"
+034 
+035 
+036 ! some bad tokens
+037 '\n' 'hello' '
+    ^
+*** Invalid statement [at "'\"]
+         ^
+*** Invalid statement [at "'h"]

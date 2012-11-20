@@ -1,0 +1,75 @@
+Trevor Newell
+Jaron Foster
+Compiler Construction – Assignment 4
+
+FIRST[Command]		    := {Identifier, begin, let, if, while}
+
+FOLLOW[Command]		    := {;}{end}
+
+FIRST[SingleCommand]	:= {Identifier, begin, let, if, while}
+
+FOLLOW[SingleCommand]	:= {else}{;}{end}{Identifier, begin, let, if, while}{in}{const, var, proc, func, type}
+
+FIRST[Expression]	    := {Identifier, Character, Number}{Operator}{let, if}{left_paren, left_brace, left_bracket}
+
+FOLLOW[Expression]	    := {then, else, do}{,}{right_paren, right_bracket}{Identifier, Character, Number}{Operator}{let, if}{left_paren, left_brace, left_bracket}{else}{;}{end}{Identifier, begin, let, if, while}{in}{const, var, proc, func, type}{right_brace}{;}{;, in}{,}{right_paren}
+
+FIRST[SecondaryExpr]	:= {Identifier, Character, Number}{Operator}{left_brace, left_bracket}
+
+FOLLOW[SecondaryExpr]	:= {Operator}{then, else, do}{,}{right_paren, right_bracket}{Identifier, Character, Number}{Operator}{let, if}{left_paren, left_brace, left_bracket}{else}{;}{end}{Identifier, begin, let, if, while}{in}{const, var, proc, func, type}{right_brace}{;}{;, in}{,}{right_paren}
+
+FIRST[PrimaryExpr]	    := {Identifier, Character, Number}{Operator}{left_brace, left_bracket}
+
+FOLLOW[PrimaryExpr]	    := {Operator}{Operator}{then, else, do}{,}{right_paren, right_bracket}{Identifier, Character, Number}{Operator}{let, if}{left_paren, left_brace, left_bracket}{else}{;}{end}{Identifier, begin, let, if, while}{in}{const, var, proc, func, type}{right_brace}{;}{;, in}{,}{right_paren}
+
+FIRST[RecordAgg]	    := {Identifier}
+
+FOLLOW[RecordAgg]	    := {right_brace}{Identifier}
+
+FIRST[ArrayAgg]	        := {Identifier, Character, Number}{Operator}{let, if}{left_paren, left_brace, left_bracket}
+
+FOLLOW[ArrayAgg]	    := {right_bracket}{Identifier, Character, Number}{Operator}{let, if}{left_paren, left_brace, left_bracket}
+
+FIRST[Vname]	        := {Identifier}
+
+FOLLOW[Vname]	        := {.}{left_bracket}{:=}{Operator}{Operator}{then, else, do}{,}{right_paren, right_bracket}{Identifier, Character, Number}{Operator}{let, if}{left_paren, left_brace, left_bracket}{else}{;}{end}{Identifier, begin, let, if, while}{in}{const, var, proc, func, type}{right_brace}{;}{;, in}{,}{right_paren}{,}{Identifier, Character, Number}{Operator}{let, if}{left_paren, left_brace, left_bracket}
+
+FIRST[Declaration]	    := {const, var, proc, func, type}
+
+FOLLOW[Declaration]	    := {;}{in}
+
+FIRST[SingleDecl]	    := {const, var, proc, func, type}
+
+FOLLOW[SingleDecl]	    := {;}{;}{in}{const, var, proc, func, type}
+
+FIRST[FParamSeq]	    := {Identifier, var, proc, func}
+
+FOLLOW[FParamSeq]	    := {right_paren}
+
+FIRST[PFParamSeq]	    := {Identifier, var, proc, func}
+
+FOLLOW[PFParamSeq]	    := {right_paren}{Identifier, var, proc, func}
+
+FIRST[FormalParam]	    := {Identifier, var, proc, func}
+
+FOLLOW[FormalParam]	    := {,}{right_paren}{Identifier, var, proc, func}
+
+FIRST[AParamSeq]	    := {Identifier, Character, Number}{Operator}{let, if}{left_paren, left_brace, left_bracket}{var, proc, func}
+
+FOLLOW[AParamSeq]	    := {right_paren}
+
+FIRST[PAParamSeq]	    := {Identifier, Character, Number}{Operator}{let, if}{left_paren, left_brace, left_bracket}{var, proc, func}
+
+FOLLOW[PAParamSeq]	    := {right_paren}{Identifier, Character, Number}{Operator}{let, if}{left_paren, left_brace, left_bracket}{var, proc, func}
+
+FIRST[ActualParam]	    := {Identifier, Character, Number}{Operator}{let, if}{left_paren, left_brace, left_bracket}{var, proc, func}
+
+FOLLOW[ActualParam]	    := {,}{right_paren}{Identifier, Character, Number}{Operator}{let, if}{left_paren, left_brace, left_bracket}{var, proc, func}
+
+FIRST[TypeDenoter]	    := {Identifier, array, record}
+
+FOLLOW[TypeDenoter]	    := {,}{~}{Identifier, array, record}{,}{right_paren}{Identifier, var, proc, func}
+
+FIRST[RecTypeDenoter]	:= {Identifier}
+
+FOLLOW[RecTypeDenoter]  := {end}{Identifier}

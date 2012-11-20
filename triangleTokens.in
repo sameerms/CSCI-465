@@ -1,0 +1,37 @@
+! Tokens for Triangle Scanner
+! This is a comment
+! This is a coment with various Graphic !@)(!#(*$)%&%&(_)(?:":"}{{P~`+_-|
+
+! integer literal
+398450
+8904854
+
+!character literal
+'1' '@' '#' '"' '(' '+' '{' 'd' ' ' '	'
+
+! Identifier
+hello world HELLO hellO HellO
+
+!mixed integer literal and identifier
+34359goodbye498
+traingle4586
+
+! Key words
+array begin const do else end func if in let of proc record then type var while
+
+! NOT keywords, but identifiers
+Array BEGIN CONST Do Else End FUNC IF IN Let OF Proc Record THEN TYPE vAr WhiLE
+
+!Special symbol tokens
+. : ; , := ~ ( ) [ ] { }
+
+
+!operators
++ - * / = < > \ & % ^ ?
+
+! more operators
+++ -- += *= \= \/ /\ && ^= ?? ?= \? /|\ /\/\
+
+
+! some bad tokens
+'\n' 'hello' '
