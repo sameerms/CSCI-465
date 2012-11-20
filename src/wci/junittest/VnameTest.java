@@ -13,7 +13,9 @@ import wci.frontend.triangle.TriangleParserTD;
 import wci.frontend.triangle.TriangleScanner;
 import wci.frontend.triangle.parsers.VnameParser;
 import wci.intermediate.*;
+import wci.intermediate.symtabimpl.DefinitionImpl;
 import wci.intermediate.symtabimpl.SymTabKeyImpl;
+import wci.intermediate.symtabimpl.TrianglePredefined;
 import wci.intermediate.typeimpl.TypeFormImpl;
 
 public class VnameTest {
@@ -32,6 +34,8 @@ public class VnameTest {
 				"x",
 				"x.y",
 				"x.y.z",
+				"x.z",
+				"x.z[5]",
 				"x[5]",
 				/*
 				"x[c-d+e]",
@@ -43,6 +47,9 @@ public class VnameTest {
 				"x[6].y[]"
 				*/
 				};
+		SymTabStack symTabStack = parser.getSymTabStack();
+		TrianglePredefined.initialize(symTabStack);
+		symTabStack.push();
 		for (String s : code) {
 			StringReader st = new StringReader(s);
 			BufferedReader bf = new BufferedReader(st);
@@ -51,12 +58,7 @@ public class VnameTest {
 				Source source = new Source(bf);
 				source.addMessageListener(new SourceMessageListener());
 				parser = new TriangleParserTD(new TriangleScanner(source));
-				SymTabStack symTabStack = parser.getSymTabStack();
-				SymTabEntry identId = symTabStack.enterLocal("x");
-				SymTab table = symTabStack.push();
-				SymTabEntry fieldId = symTabStack.enterLocal("y");
-				fieldId.setTypeSpec(TypeFactory.createType(TypeFormImpl.SCALAR));
-				identId.setTypeSpec(TypeFactory.createRecordType(table, null));
+				setUpSymbolTable();
 				VnameParser vname = new VnameParser(parser);
 				vname.parse(parser.getScanner().nextToken());
 				//assertEquals(pep.getErrorCount(),1);
@@ -64,5 +66,21 @@ public class VnameTest {
 				System.out.println(e.getMessage());
 			}
 		}
+		symTabStack.pop();
+	}
+	
+	private void setUpSymbolTable(){
+		SymTabStack symTabStack = parser.getSymTabStack();
+		SymTabEntry identId = symTabStack.enterLocal("x");
+		identId.setDefinition(DefinitionImpl.VARIABLE);
+		SymTab table = symTabStack.push();
+		SymTabEntry fieldId = symTabStack.enterLocal("y");
+		fieldId.setDefinition(DefinitionImpl.FIELD);
+		fieldId.setTypeSpec(TypeFactory.createType(TypeFormImpl.SCALAR));
+		SymTabEntry arrayId = symTabStack.enterLocal("z");
+		arrayId.setDefinition(DefinitionImpl.FIELD);
+		arrayId.setTypeSpec(TypeFactory.createArrayType(10, TrianglePredefined.integerType));
+		identId.setTypeSpec(TypeFactory.createRecordType(table, null));
+		symTabStack.pop();
 	}
 }

@@ -13,7 +13,7 @@ import static wci.intermediate.icodeimpl.ICodeNodeTypeImpl.*;
 import static wci.intermediate.typeimpl.TypeFormImpl.RECORD;
 import static wci.intermediate.typeimpl.TypeFormImpl.ARRAY;
 import static wci.intermediate.typeimpl.TypeKeyImpl.RECORD_SYMTAB;
-import static wci.intermediate.typeimpl.TypeKeyImpl.ARRAY_INDEX_TYPE;
+import static wci.intermediate.typeimpl.TypeKeyImpl.ARRAY_ELEMENT_TYPE;
 import static wci.intermediate.symtabimpl.TrianglePredefined.integerType;
 import static wci.intermediate.symtabimpl.TrianglePredefined.undefinedType;
 import static wci.intermediate.symtabimpl.DefinitionImpl.CONSTANT;
@@ -117,20 +117,24 @@ public class VnameParser extends TriangleParserTD {
 				
 				if (identId != null){
 					TypeSpec identType = identId.getTypeSpec();
-					if (identType.getForm() != ARRAY){
+					if (identType.getForm() == ARRAY){
+						vnameNode.setTypeSpec((TypeSpec)identId.getTypeSpec().getAttribute(ARRAY_ELEMENT_TYPE));
+					} else {
 						errorHandler.flag(identToken, NOT_AN_ARRAY, this);
-					} else if (!exprType.equals(integerType)){
-						errorHandler.flag(token, INVALID_INDEX_TYPE, this);
 					}
 				}
+				
+				if (!exprType.equals(integerType)){
+					errorHandler.flag(token, INVALID_INDEX_TYPE, this);
+				}
+				
 				ICodeNode subscriptNode = ICodeFactory.createICodeNode(SUBSCRIPTS);
 				setLineNumber(subscriptNode,token);
 				subscriptNode.addChild(exprNode);
 				subscriptNode.setTypeSpec(exprType);
 				vnameNode.addChild(subscriptNode);
-				vnameNode.setTypeSpec(exprType);
 				token = synchronize(RIGHT_BRACKET,TriangleErrorCode.MISSING_RIGHT_BRACKET,
-						FIRST_FOLLOW_SET);// ??
+						FIRST_FOLLOW_SET);
 			}
 			tokenType = (TriangleTokenType) token.getType();
 		}
