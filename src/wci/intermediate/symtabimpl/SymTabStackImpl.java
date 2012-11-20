@@ -107,7 +107,7 @@ public class SymTabStackImpl
      */
     public SymTabEntry enterLocal(String name)
     {
-        return get(currentNestingLevel).enter(name);
+        return get(currentNestingLevel).enter(name.toLowerCase());
     }
 
     /**
@@ -117,7 +117,7 @@ public class SymTabStackImpl
      */
     public SymTabEntry lookupLocal(String name)
     {
-        return get(currentNestingLevel).lookup(name);
+        return get(currentNestingLevel).lookup(name.toLowerCase());
     }
 
     /**
@@ -132,7 +132,7 @@ public class SymTabStackImpl
         // Search the current and enclosing scopes.
         for (int i = currentNestingLevel; (i >= 0) && (foundEntry == null); --i)
         {
-            foundEntry = get(i).lookup(name);
+            foundEntry = get(i).lookup(name.toLowerCase());
         }
 
         return foundEntry;
