@@ -6,6 +6,7 @@ import java.util.EnumSet;
 import wci.frontend.*;
 import wci.frontend.triangle.*;
 import wci.intermediate.*;
+import wci.intermediate.symtabimpl.TrianglePredefined;
 
 import static wci.frontend.triangle.TriangleTokenType.*;
 import static wci.intermediate.icodeimpl.ICodeKeyImpl.*;
@@ -55,7 +56,7 @@ public class TypeDenoterParser extends TriangleParserTD
      * @throws Exception if an error occurred.
      */
     public TypeSpec parse(Token token) throws Exception {
-    	TypeSpec typeDenoterType = null;
+    	TypeSpec typeDenoterType = TrianglePredefined.undefinedType;;
     	token = currentToken();
     	
     	switch((TriangleTokenType)token.getType()) {
