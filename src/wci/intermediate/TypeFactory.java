@@ -1,6 +1,6 @@
 package wci.intermediate;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import wci.intermediate.typeimpl.*;
 import static wci.intermediate.symtabimpl.TrianglePredefined.integerType;
@@ -39,7 +39,7 @@ public class TypeFactory
      * @param fieldList A list of symbol table entries of the fields.
      * @return the type specification.
      */
-    public static TypeSpec createRecordType(SymTab symbolTable, ArrayList<SymTabEntry> fieldList)
+    public static TypeSpec createRecordType(SymTab symbolTable, List<SymTabEntry> fieldList)
     {
         TypeSpec recordType = new TypeSpecImpl(TypeFormImpl.RECORD);
         recordType.setAttribute(TypeKeyImpl.RECORD_SYMTAB, symbolTable);

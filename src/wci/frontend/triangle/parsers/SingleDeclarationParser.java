@@ -7,6 +7,7 @@ import wci.frontend.*;
 import wci.frontend.triangle.*;
 import wci.intermediate.*;
 import wci.intermediate.symtabimpl.DefinitionImpl;
+import wci.intermediate.symtabimpl.TrianglePredefined;
 
 import static wci.frontend.triangle.TriangleErrorCode.*;
 import static wci.frontend.triangle.TriangleTokenType.*;
@@ -72,7 +73,7 @@ public class SingleDeclarationParser extends TriangleParserTD {
 		FormalParameterSequenceParser formalParameterSequence = null;
 		TypeDenoterParser typeDenoter = null;
 		EnumSet<TriangleTokenType> syncSet=null;
-		TypeSpec identifierType = null;
+		TypeSpec identifierType = TrianglePredefined.undefinedType;
 		Token identifierToken = null;
 		ICode routineICode = null;
 		
@@ -142,7 +143,7 @@ public class SingleDeclarationParser extends TriangleParserTD {
             // but don't set how it's defined yet.
             if (procId == null) {
             	procId = symTabStack.enterLocal(identifierToken.getText().toLowerCase());
-            	procId.setTypeSpec(null);
+            	procId.setTypeSpec(TrianglePredefined.undefinedType);
             	procId.setDefinition(DefinitionImpl.PROCEDURE);
             	procId.appendLineNumber(identifierToken.getLineNumber());
             	procId.setAttribute(ROUTINE_SYMTAB, symTabStack.push());
@@ -174,6 +175,7 @@ public class SingleDeclarationParser extends TriangleParserTD {
             	funcId = symTabStack.enterLocal(identifierToken.getText().toLowerCase());
             	funcId.setDefinition(DefinitionImpl.FUNCTION);
             	funcId.appendLineNumber(identifierToken.getLineNumber());
+            	funcId.setTypeSpec(TrianglePredefined.undefinedType);
             	funcId.setAttribute(ROUTINE_SYMTAB, symTabStack.push());
             	funcId.setAttribute(ROUTINE_ICODE, routineICode);
             }

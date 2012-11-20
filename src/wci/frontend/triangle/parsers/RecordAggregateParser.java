@@ -3,10 +3,12 @@ package wci.frontend.triangle.parsers;
 import wci.frontend.*;
 import wci.frontend.triangle.*;
 import wci.intermediate.*;
+import wci.intermediate.symtabimpl.*;
 import wci.intermediate.icodeimpl.ICodeNodeTypeImpl;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.List;
 
 import static wci.frontend.triangle.TriangleTokenType.*;
 import static wci.intermediate.icodeimpl.ICodeKeyImpl.*;
@@ -60,13 +62,16 @@ public class RecordAggregateParser extends TriangleParserTD
      * @throws Exception if an error occurred.
      */
     public ICodeNode parse(Token token) throws Exception {
-    	ICodeNode recordAggregateNode = ICodeFactory.createICodeNode(ICodeNodeTypeImpl.RECORD_CONSTANT);
     	TriangleTokenType type = null;
     	
     	token = currentToken();
     	
+    	ICodeNode recordAggregateNode = ICodeFactory.createICodeNode(ICodeNodeTypeImpl.RECORD_CONSTANT);
+    	recordAggregateNode.setTypeSpec(TrianglePredefined.undefinedType);
     	setLineNumber(recordAggregateNode,token);
-    	
+    	// push a symbol table onto the stack to create Record type
+    	List<SymTabEntry> fieldList = new ArrayList<SymTabEntry>();
+    	symTabStack.push();
     	do {
     		Token identToken = token;
     		token = synchronize(IDENTIFIER, MISSING_IDENTIFIER, TILDE_SET);
@@ -79,6 +84,16 @@ public class RecordAggregateParser extends TriangleParserTD
     		setLineNumber(fieldNode,identToken);
     		fieldNode.setTypeSpec(exprNode.getTypeSpec());
     		fieldNode.addChild(exprNode);
+    		SymTabEntry fieldId = symTabStack.lookupLocal(identToken.getText());
+    		if (fieldId == null){
+    			fieldId = symTabStack.enterLocal(identToken.getText());
+    			fieldId.setDefinition(DefinitionImpl.CONSTANT);
+    			fieldId.appendLineNumber(identToken.getLineNumber());
+    			fieldId.setTypeSpec(exprNode.getTypeSpec());
+    			fieldList.add(fieldId);
+    		} else {
+    			errorHandler.flag(identToken, IDENTIFIER_REDEFINED, this);
+    		}
     		token = currentToken();
     		type = (TriangleTokenType)token.getType();
     		if (type == COMMA){
@@ -86,6 +101,7 @@ public class RecordAggregateParser extends TriangleParserTD
     		}
     	} while( type == COMMA);
     	
+    	recordAggregateNode.setTypeSpec(TypeFactory.createRecordType(symTabStack.pop(), fieldList));
         return recordAggregateNode;
     }
 

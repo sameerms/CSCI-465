@@ -28,6 +28,8 @@ public class TrianglePredefined
     public static SymTabEntry charId;
     public static SymTabEntry falseId;
     public static SymTabEntry trueId;
+    public static SymTabEntry maxintId;
+    
 
     /**
      * Initialize a symbol table stack with predefined identifiers.
@@ -37,6 +39,7 @@ public class TrianglePredefined
     {
         initializeTypes(symTabStack);
         initializeConstants(symTabStack);
+        initializeOperators(symTabStack);
     }
 
     /**
@@ -87,5 +90,22 @@ public class TrianglePredefined
         trueId.setDefinition(DefinitionImpl.CONSTANT);
         trueId.setTypeSpec(booleanType);
         trueId.setAttribute(CONSTANT_VALUE, new Boolean(true));
+        
+        maxintId = symTabStack.enterLocal("maxint");
+        maxintId.setDefinition(DefinitionImpl.CONSTANT);
+        maxintId.setTypeSpec(integerType);
+        maxintId.setAttribute(CONSTANT_VALUE, Integer.MAX_VALUE);
+    }
+    
+    private static void initializeOperators(SymTabStack symTabStack)
+    {
+    	SymTabEntry funcId;
+    	
+    	funcId = symTabStack.enterLocal("\\");
+    	funcId.setDefinition(DefinitionImpl.FUNCTION);
+    	funcId.setTypeSpec(booleanType);
+    	funcId.setAttribute(ROUTINE_SYMTAB, symTabStack.push());
+    	
+    	funcId.setAttribute(ROUTINE_ICODE, routineICode);
     }
 }

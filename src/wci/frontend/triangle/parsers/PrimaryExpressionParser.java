@@ -9,6 +9,7 @@ import wci.frontend.triangle.*;
 import wci.intermediate.*;
 import wci.intermediate.symtabimpl.DefinitionImpl;
 import wci.intermediate.symtabimpl.SymTabKeyImpl;
+import wci.intermediate.symtabimpl.TrianglePredefined;
 import wci.intermediate.typeimpl.TypeChecker;
 
 import static wci.frontend.triangle.TriangleErrorCode.*;
@@ -78,6 +79,7 @@ public class PrimaryExpressionParser extends TriangleParserTD {
 	@SuppressWarnings("unchecked")
 	public ICodeNode parse(Token token) throws Exception {
 		ICodeNode primaryExpressionNode = null;
+		TypeSpec defaultType = TrianglePredefined.undefinedType;
 
 		token = currentToken();
 		TriangleTokenType tokenType = (TriangleTokenType) token.getType();
@@ -116,8 +118,8 @@ public class PrimaryExpressionParser extends TriangleParserTD {
 				setLineNumber(primaryExpressionNode,token);
 				primaryExpressionNode.addChild(paramNode);
 				primaryExpressionNode.setAttribute(ID, token.getText());
-				SymTabEntry funcId = symTabStack.lookup(token.getText()
-						.toLowerCase());
+				primaryExpressionNode.setTypeSpec(defaultType);
+				SymTabEntry funcId = symTabStack.lookup(token.getText().toLowerCase());
 				if (funcId != null) {
 					if (funcId.getDefinition() != DefinitionImpl.FUNCTION) {
 						errorHandler.flag(token, IDENTIFIER_NOT_FUNCTION, this);
@@ -161,6 +163,7 @@ public class PrimaryExpressionParser extends TriangleParserTD {
 		case OPERATOR:
 			token = currentToken();
 			primaryExpressionNode = ICodeFactory.createICodeNode(CALL);
+			primaryExpressionNode.setTypeSpec(defaultType);
 			ICodeNode paramNode = ICodeFactory.createICodeNode(PARAMETERS);
 			primaryExpressionNode.addChild(paramNode);
 			setLineNumber(primaryExpressionNode, token);

@@ -3,6 +3,8 @@ package wci.frontend.triangle.parsers;
 import wci.frontend.*;
 import wci.frontend.triangle.*;
 import wci.intermediate.*;
+import wci.intermediate.symtabimpl.TrianglePredefined;
+
 import java.util.EnumSet;
 
 import static wci.frontend.triangle.TriangleErrorCode.ELEMENT_TYPE_MISMATCH;
@@ -53,12 +55,13 @@ public class ArrayAggregateParser extends TriangleParserTD
      * @throws Exception if an error occurred.
      */
     public ICodeNode parse(Token token) throws Exception {
-    	ICodeNode arrayAggregateNode = ICodeFactory.createICodeNode(ARRAY_CONSTANT);
     	TriangleTokenType type = null;
     	ICodeNode prevNode = null;
     	int size = 0;
     	
     	token = currentToken();
+    	ICodeNode arrayAggregateNode = ICodeFactory.createICodeNode(ARRAY_CONSTANT);
+    	arrayAggregateNode.setTypeSpec(TrianglePredefined.undefinedType);
     	setLineNumber(arrayAggregateNode, token);
     	
     	do {
@@ -77,8 +80,7 @@ public class ArrayAggregateParser extends TriangleParserTD
     		}
     	} while( type == COMMA);
 
-    	TypeSpec arrayType = TypeFactory.createArrayType(size, prevNode.getTypeSpec());
-    	arrayAggregateNode.setTypeSpec(arrayType);
+    	arrayAggregateNode.setTypeSpec(TypeFactory.createArrayType(size, prevNode.getTypeSpec()));
     	
         return arrayAggregateNode;
     }
