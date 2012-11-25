@@ -59,6 +59,8 @@ public enum TriangleErrorCode
     IDENTIFIER_NOT_FUNCTION("Identifier is not defined as a function"),
     OPERATOR_NOT_FUNCTION("Operator is not defined as a function"),
     OPERATOR_NOT_DEFINED("Operator not defined"),
+    OPERAND_MISMATCH("Number of operands do not match operator definition"),
+    NOT_EXPECTING_VALUE_PARM("Formal parameter does not accept a value parameter"),
     NUMBER_ACTUAL_FORMAL_NO_MATCH("Mismatch in number of actual and formal parameters"),
     PARAMETER_TYPE_MISMATCH("Type mismatch with formal parameter"),
     EXPECTING_VARIABLE_PARAM("Expecting a variable parameter"),
@@ -69,7 +71,8 @@ public enum TriangleErrorCode
     EXPECTING_BOOLEAN("Expecting a boolean"),
     ElSE_TYPE_MISMATCH("Else expression type does not match then expression type"),
     ASSIGNMENT_NOT_TYPE_COMPATIBLE("Right hand side is not type compatible with left hand side"),
-    IDENTIFIER_CONSTANT("Identifier cannot be a constant"),
+    ASSERT_IDENTIFIER_VARIABLE("Identifier must be a variable"),
+    OPERAND_TYPE_MISMATCH("Operand type does not match definition"),
     //
     MISSING_BEGIN("Missing BEGIN"),
     MISSING_COLON("Missing :"),

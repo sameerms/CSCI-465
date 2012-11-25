@@ -102,7 +102,6 @@ public class FormalParameterParser extends TriangleParserTD {
 				valueParamId.appendLineNumber(identifierToken.getLineNumber());
 				valueParamId.setDefinition(DefinitionImpl.VALUE_PARM);
 				valueParamId.setTypeSpec(valueParamType);
-				valueParamType.setIdentifier(valueParamId);
 			} else {
 				errorHandler.flag(token, IDENTIFIER_REDEFINED, this);
 			}
@@ -122,7 +121,6 @@ public class FormalParameterParser extends TriangleParserTD {
 				varParamId.appendLineNumber(identifierToken.getLineNumber());
 				varParamId.setDefinition(DefinitionImpl.VAR_PARM);
 				varParamId.setTypeSpec(varParamType);
-				varParamType.setIdentifier(varParamId);
 			} else {
 				errorHandler.flag(token, IDENTIFIER_REDEFINED, this);
 			}

@@ -115,6 +115,10 @@ public class SingleCommandParser extends TriangleParserTD {
 				setLineNumber(singleCommandNode, token);
 				VnameParser vname = new VnameParser(this);
 				ICodeNode lhs = vname.parse(token);
+				SymTabEntry identId = symTabStack.lookup((String)lhs.getAttribute(ID));
+				if (identId != null && identId.getDefinition() != DefinitionImpl.VARIABLE){
+					errorHandler.flag(token, ASSERT_IDENTIFIER_VARIABLE, this);
+				}
 				singleCommandNode.addChild(lhs);
 				token = synchronize(COLON_EQUALS, MISSING_COLON_EQUALS,COLON_EQUAL_SET);
 				expression = new ExpressionParser(this);

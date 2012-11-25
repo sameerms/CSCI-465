@@ -189,8 +189,8 @@ public class PrimaryExpressionParser extends TriangleParserTD {
 			if (formalParamSeq.size() != 1){
 				errorHandler.flag(token, NUMBER_ACTUAL_FORMAL_NO_MATCH, this);
 			} else {
-				if (!TypeChecker.isParameterCompatible(operandNode,formalParamSeq.get(0),this)){
-					errorHandler.flag(token, PARAMETER_TYPE_MISMATCH, this);
+				if (!formalParamSeq.get(0).getTypeSpec().equals(operandNode.getTypeSpec())){
+					errorHandler.flag(token, OPERAND_TYPE_MISMATCH, this);
 				}
 			}
 			break;

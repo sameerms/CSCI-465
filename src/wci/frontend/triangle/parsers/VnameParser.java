@@ -78,9 +78,7 @@ public class VnameParser extends TriangleParserTD {
 		SymTabEntry identId = symTabStack.lookup(token.getText().toLowerCase());
         if (identId == null) {
             errorHandler.flag(token, IDENTIFIER_UNDEFINED, this);
-        } else if (identId.getDefinition() == CONSTANT){
-        	errorHandler.flag(token, IDENTIFIER_CONSTANT, this);
-        } else {
+        }  else {
         	vnameNode.setTypeSpec(identId.getTypeSpec());
         }
 		
