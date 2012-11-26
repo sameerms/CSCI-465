@@ -38,7 +38,12 @@ public class DeclarationTest {
 	@Test
 	public void testPrimaryExpression() {
 		String[] code = {
-				"const x ~ 5+6",
+				/*"const x ~ 5+6",
+				"var y : Integer",
+				"proc foo(z:Boolean) ~ Begin z := false end",
+				
+				*/
+				"func call(z:Boolean):Integer ~ \\z",
 				/*"const x ~ 5+6-c+d*4/r",
 				" x ~ 5+6-c+d*4/r",
 				"proc foo(z:Boolean) ~ Begin z := false end",

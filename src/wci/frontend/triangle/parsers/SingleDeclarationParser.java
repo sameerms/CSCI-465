@@ -102,7 +102,6 @@ public class SingleDeclarationParser extends TriangleParserTD {
             }
             else {
                 errorHandler.flag(identifierToken, IDENTIFIER_REDEFINED, this);
-                constantId = null;
             }
 			break;
 		case VAR:
@@ -150,6 +149,7 @@ public class SingleDeclarationParser extends TriangleParserTD {
             	procId.setAttribute(ROUTINE_ICODE, routineICode);
             }else {
                 errorHandler.flag(identifierToken, IDENTIFIER_REDEFINED, this);
+                procId = null;
             }
 			
 			formalParameterSequence = new FormalParameterSequenceParser(this);
@@ -164,6 +164,7 @@ public class SingleDeclarationParser extends TriangleParserTD {
             if (procId != null) {
             	procId.setAttribute(ROUTINE_PARMS,procParamList);
             }
+            symTabStack.pop();
 			break;
 		case FUNC:
 			identifierToken = nextToken();
@@ -181,6 +182,7 @@ public class SingleDeclarationParser extends TriangleParserTD {
             }
             else {
                 errorHandler.flag(identifierToken, IDENTIFIER_REDEFINED, this);
+                funcId = null;
             }
 			syncSet = EnumSet.of(LEFT_PAREN);
 			syncSet.addAll(FormalParameterSequenceParser.FIRST_FOLLOW_SET);
@@ -194,6 +196,7 @@ public class SingleDeclarationParser extends TriangleParserTD {
 			synchronize(RIGHT_PAREN, MISSING_RIGHT_PAREN, syncSet);
 			syncSet.remove(COLON);
 			token = synchronize(COLON, MISSING_COLON, syncSet);
+			Token typeToken = currentToken();
 			typeDenoter = new TypeDenoterParser(this);
 			TypeSpec funcType = typeDenoter.parse(token);
 			syncSet = ExpressionParser.FIRST_FOLLOW_SET.clone();
@@ -203,6 +206,9 @@ public class SingleDeclarationParser extends TriangleParserTD {
             if (funcId != null) {
             	funcId.setTypeSpec(funcType);
             	funcId.setAttribute(ROUTINE_PARMS, funcParamList);
+            	if (!routineICode.getRoot().getTypeSpec().equals(funcType)){
+            		errorHandler.flag(typeToken, RETURN_TYPE_MISMATCH, this);
+            	}
             }
            	symTabStack.pop();
 			break;
@@ -215,7 +221,7 @@ public class SingleDeclarationParser extends TriangleParserTD {
 			token = synchronize(TILDE, MISSING_TILDE, syncSet);
 			typeDenoter = new TypeDenoterParser(this);
 			TypeSpec typeType = typeDenoter.parse(token);
-			SymTabEntry typeId = symTabStack.lookupLocal(identifierToken.getText().toLowerCase());
+			SymTabEntry typeId = symTabStack.lookup(identifierToken.getText().toLowerCase());
 			// Enter the new identifier into the symbol table
             // but don't set how it's defined yet.
             if (typeId == null) {

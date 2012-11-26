@@ -189,19 +189,6 @@ public class TrianglePredefined
  		((ArrayList<SymTabEntry>)routineId.getAttribute(ROUTINE_PARMS)).add(paramId);
     }
     
-    private static void notOperator(SymTabStack symTabStack)
-    {
-    	SymTabEntry routineId = createRoutineSymEntry(symTabStack, "\\",DefinitionImpl.FUNCTION,booleanType);
-    	addFormalParam(routineId, "b", booleanType, DefinitionImpl.VALUE_PARM);
-    	
-    	ICodeNode vnameNode = ICodeFactory.createICodeNode(VARIABLE);
-		vnameNode.setAttribute(ID, "b");
-		vnameNode.setTypeSpec(booleanType);
-    	ICodeNode notNode = ICodeFactory.createICodeNode(NOT);
-    	notNode.addChild(vnameNode);
-    	((ICode)routineId.getAttribute(ROUTINE_ICODE)).setRoot(notNode);
-    }
-    
     private static void unaryOperator(SymTabStack symTabStack, String opString, TypeSpec operandType, 
     		TypeSpec returnType)
     {
@@ -210,9 +197,9 @@ public class TrianglePredefined
     	ICodeNode vnameNode = ICodeFactory.createICodeNode(VARIABLE);
 		vnameNode.setAttribute(ID, "operand");
 		vnameNode.setTypeSpec(operandType);
-    	ICodeNode addNode = ICodeFactory.createICodeNode(STANDARD_ENVIRONMENT.get(opString));
-    	addNode.addChild(vnameNode);
-    	((ICode)routineId.getAttribute(ROUTINE_ICODE)).setRoot(addNode);
+    	ICodeNode opNode = ICodeFactory.createICodeNode(STANDARD_ENVIRONMENT.get(opString));
+    	opNode.addChild(vnameNode);
+    	((ICode)routineId.getAttribute(ROUTINE_ICODE)).setRoot(opNode);
     }
     
     private static void binaryOperator(SymTabStack symTabStack, String opString, TypeSpec lhsType, 
@@ -224,12 +211,12 @@ public class TrianglePredefined
     	ICodeNode vnameNode = ICodeFactory.createICodeNode(VARIABLE);
 		vnameNode.setAttribute(ID, "lhs");
 		vnameNode.setTypeSpec(lhsType);
-    	ICodeNode addNode = ICodeFactory.createICodeNode(STANDARD_ENVIRONMENT.get(opString));
-    	addNode.addChild(vnameNode);
+    	ICodeNode opNode = ICodeFactory.createICodeNode(STANDARD_ENVIRONMENT.get(opString));
+    	opNode.addChild(vnameNode);
     	vnameNode = ICodeFactory.createICodeNode(VARIABLE);
 		vnameNode.setAttribute(ID, "rhs");
 		vnameNode.setTypeSpec(rhsType);
-		addNode.addChild(vnameNode);
-    	((ICode)routineId.getAttribute(ROUTINE_ICODE)).setRoot(addNode);
+		opNode.addChild(vnameNode);
+    	((ICode)routineId.getAttribute(ROUTINE_ICODE)).setRoot(opNode);
     }
 }
