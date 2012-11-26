@@ -67,7 +67,7 @@ public enum TriangleErrorCode
     FORMAL_PARAM_NOT_VAR("Not expecting a Var actual parameter"),
     FORMAL_PARAM_NOT_PROC("Not expecting a Proc actual paramter"),
     FORMAL_PARAM_NOT_FUNC("Not expecting a Func actual paramter"),
-    FORMAL_PARAM_NOT_VALUE("Not expecting a Value actual paramter"),
+    FORMAL_PARAM_NOT_VALUE("Not expecting an expression"),
     EXPECTING_BOOLEAN("Expecting a boolean"),
     ElSE_TYPE_MISMATCH("Else expression type does not match then expression type"),
     ASSIGNMENT_NOT_TYPE_COMPATIBLE("Right hand side is not type compatible with left hand side"),

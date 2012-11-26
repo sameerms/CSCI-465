@@ -40,6 +40,7 @@ public class TrianglePredefined
     public static TypeSpec integerType;
     public static TypeSpec booleanType;
     public static TypeSpec charType;
+    public static TypeSpec anyType;
     public static TypeSpec undefinedType;
 
     // Predefined identifiers.
@@ -62,7 +63,7 @@ public class TrianglePredefined
 		STANDARD_ENVIRONMENT.put("//",MOD);
 		STANDARD_ENVIRONMENT.put("/\\", AND);
 		STANDARD_ENVIRONMENT.put("=", EQ);
-		STANDARD_ENVIRONMENT.put("//=", NE);
+		STANDARD_ENVIRONMENT.put("\\=", NE);
 		STANDARD_ENVIRONMENT.put("<", LT);
 		STANDARD_ENVIRONMENT.put("<=", LE);
 		STANDARD_ENVIRONMENT.put(">", GT);
@@ -109,6 +110,9 @@ public class TrianglePredefined
         charId.setDefinition(DefinitionImpl.TYPE);
         charId.setTypeSpec(charType);
 
+        // Any type
+        anyType = TypeFactory.createType(SCALAR);
+        
         // Undefined type.
         undefinedType = TypeFactory.createType(SCALAR);
     }
@@ -139,10 +143,25 @@ public class TrianglePredefined
     
     private static void initializeOperators(SymTabStack symTabStack)
     {
-    	notOperator(symTabStack);
-    	addOperator(symTabStack);
-    	
-    	
+    	unaryOperator(symTabStack,"\\",booleanType,booleanType);
+    	//addOperator(symTabStack);
+    	binaryOperator(symTabStack,"+",integerType,integerType,integerType);
+    	binaryOperator(symTabStack,"-",integerType,integerType,integerType);
+    	binaryOperator(symTabStack,"*",integerType,integerType,integerType);
+    	binaryOperator(symTabStack,"/",integerType,integerType,integerType);
+    	//comparison operators
+    	binaryOperator(symTabStack,"<",integerType,integerType,booleanType);
+    	binaryOperator(symTabStack,"<=",integerType,integerType,booleanType);
+    	binaryOperator(symTabStack,">",integerType,integerType,booleanType);
+    	binaryOperator(symTabStack,">=",integerType,integerType,booleanType);
+    	binaryOperator(symTabStack,"=",anyType,anyType,booleanType);
+    	binaryOperator(symTabStack,"\\=",anyType,anyType,booleanType);
+    	//Boolean operators
+    	binaryOperator(symTabStack,"\\/",booleanType,booleanType,booleanType);
+    	binaryOperator(symTabStack,"/\\",booleanType,booleanType,booleanType);
+    	//char functions
+    	unaryOperator(symTabStack,"chr",integerType,charType);
+    	unaryOperator(symTabStack,"ord",charType,integerType);
     }
     
     private static SymTabEntry createRoutineSymEntry(SymTabStack symTabStack, String name, Definition def, TypeSpec returnType)
@@ -183,19 +202,33 @@ public class TrianglePredefined
     	((ICode)routineId.getAttribute(ROUTINE_ICODE)).setRoot(notNode);
     }
     
-    private static void addOperator(SymTabStack symTabStack)
+    private static void unaryOperator(SymTabStack symTabStack, String opString, TypeSpec operandType, 
+    		TypeSpec returnType)
     {
-    	SymTabEntry routineId = createRoutineSymEntry(symTabStack, "+",DefinitionImpl.FUNCTION,integerType);
-    	addFormalParam(routineId, "lhs", integerType, DefinitionImpl.VALUE_PARM);
-    	addFormalParam(routineId, "rhs", integerType, DefinitionImpl.VALUE_PARM);
+    	SymTabEntry routineId = createRoutineSymEntry(symTabStack, opString,DefinitionImpl.FUNCTION,returnType);
+    	addFormalParam(routineId, "operand", operandType, DefinitionImpl.VALUE_PARM);
+    	ICodeNode vnameNode = ICodeFactory.createICodeNode(VARIABLE);
+		vnameNode.setAttribute(ID, "operand");
+		vnameNode.setTypeSpec(operandType);
+    	ICodeNode addNode = ICodeFactory.createICodeNode(STANDARD_ENVIRONMENT.get(opString));
+    	addNode.addChild(vnameNode);
+    	((ICode)routineId.getAttribute(ROUTINE_ICODE)).setRoot(addNode);
+    }
+    
+    private static void binaryOperator(SymTabStack symTabStack, String opString, TypeSpec lhsType, 
+    		TypeSpec rhsType, TypeSpec returnType)
+    {
+    	SymTabEntry routineId = createRoutineSymEntry(symTabStack, opString,DefinitionImpl.FUNCTION,returnType);
+    	addFormalParam(routineId, "lhs", lhsType, DefinitionImpl.VALUE_PARM);
+    	addFormalParam(routineId, "rhs", rhsType, DefinitionImpl.VALUE_PARM);
     	ICodeNode vnameNode = ICodeFactory.createICodeNode(VARIABLE);
 		vnameNode.setAttribute(ID, "lhs");
-		vnameNode.setTypeSpec(integerType);
-    	ICodeNode addNode = ICodeFactory.createICodeNode(ADD);
+		vnameNode.setTypeSpec(lhsType);
+    	ICodeNode addNode = ICodeFactory.createICodeNode(STANDARD_ENVIRONMENT.get(opString));
     	addNode.addChild(vnameNode);
     	vnameNode = ICodeFactory.createICodeNode(VARIABLE);
 		vnameNode.setAttribute(ID, "rhs");
-		vnameNode.setTypeSpec(integerType);
+		vnameNode.setTypeSpec(rhsType);
 		addNode.addChild(vnameNode);
     	((ICode)routineId.getAttribute(ROUTINE_ICODE)).setRoot(addNode);
     }

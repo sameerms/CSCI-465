@@ -31,9 +31,19 @@ public class ProgramICodeTest {
 	public void testProgram() {
 		String[] code = {
 				/*"x := -5;\n x := x + (z - 5) / y"
-				"if (x <= -5) then x := x + 5 else x := x + 1",
-				"while //(x >= 5) do \n begin \n x := x - 1 \n end"*/
-				"let var x:integer in x := 5"
+				"if (x <= -5) then x := x + 5 else x := x + 1",*/
+				"let const m ~ 5; \n"+
+				"var x: integer; \n"+
+				"proc foo (var y : integer) ~ \n"+
+				"  x := y + m \n"+
+				"in \n"+
+				"begin \n"+
+				"while \\(x >= 5) do \n begin \n x := x - m \n end; \n"+
+				"x := x/5 * x \\/ true;\n"+
+				"foo(proc foo);\n"+
+				"end;"
+				
+				//"let var x:integer in x := x *2"
 				};
 		for (String s : code) {
 			StringReader st = new StringReader(s);

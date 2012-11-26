@@ -6,15 +6,14 @@ import java.util.EnumSet;
 import wci.frontend.*;
 import wci.frontend.triangle.*;
 import wci.intermediate.*;
-import wci.intermediate.icodeimpl.ICodeNodeTypeImpl;
 import wci.intermediate.symtabimpl.DefinitionImpl;
 import wci.intermediate.symtabimpl.SymTabKeyImpl;
-import wci.intermediate.typeimpl.TypeChecker;
 
 import static wci.frontend.triangle.TriangleErrorCode.*;
 import static wci.frontend.triangle.TriangleTokenType.*;
 import static wci.intermediate.icodeimpl.ICodeKeyImpl.*;
 import static wci.intermediate.icodeimpl.ICodeNodeTypeImpl.*;
+import static wci.intermediate.symtabimpl.TrianglePredefined.booleanType;
 
 /**
  * <h1>SingleCommandParser</h1>
@@ -94,21 +93,21 @@ public class SingleCommandParser extends TriangleParserTD {
 				singleCommandNode = ICodeFactory.createICodeNode(CALL);
 				singleCommandNode.setAttribute(ID, token.getText());
 				setLineNumber(singleCommandNode,token);
-				ICodeNode paramNode = ICodeFactory.createICodeNode(PARAMETERS);
-				singleCommandNode.addChild(paramNode);
 				ArrayList<SymTabEntry> formalParameterSeq = null;
 				SymTabEntry procId = symTabStack.lookup(token.getText().toLowerCase());
-				if (singleCommandNode != null) {
+				if (procId != null) {
 					if (procId.getDefinition() != DefinitionImpl.PROCEDURE) {
 						errorHandler.flag(token, IDENTIFIER_NOT_PROCEDURE, this);
 					}
 					formalParameterSeq = (ArrayList<SymTabEntry>) procId.getAttribute(SymTabKeyImpl.ROUTINE_PARMS);
 					singleCommandNode.setTypeSpec(procId.getTypeSpec());
+				} else {
+					errorHandler.flag(token, PROCEDURE_UNDEFINED, this);
 				}
 				token = nextToken(); // absorb the Identifier
 				token = nextToken(); // absorb left parenthesis
 				ActualParameterSequenceParser actualParameterSeq = new ActualParameterSequenceParser(this);
-				paramNode.addChild(actualParameterSeq.parse(token,formalParameterSeq));
+				singleCommandNode.addChild(actualParameterSeq.parse(token,formalParameterSeq));
 				token = synchronize(RIGHT_PAREN, MISSING_RIGHT_PAREN,FOLLOW_SET);
 			} else { // assignment statement
 				singleCommandNode = ICodeFactory.createICodeNode(ASSIGN);
@@ -124,7 +123,7 @@ public class SingleCommandParser extends TriangleParserTD {
 				expression = new ExpressionParser(this);
 				ICodeNode rhs = expression.parse(token);
 				singleCommandNode.addChild(rhs);
-				if (!TypeChecker.isAssignmentCompatible(lhs, rhs)){
+				if (!lhs.getTypeSpec().equals(rhs.getTypeSpec())){
 					errorHandler.flag(token, ASSIGNMENT_NOT_TYPE_COMPATIBLE, this);
 				}
 			}
@@ -144,7 +143,7 @@ public class SingleCommandParser extends TriangleParserTD {
 			declaration.parse(token);
 			token = synchronize(IN, MISSING_IN,FIRST_FOLLOW_SET);
 			singleCommandParser = new SingleCommandParser(this);
-			singleCommandParser.parse(token);
+			singleCommandNode.addChild(singleCommandParser.parse(token));
 			symTabStack.pop();
 			break;
 		case IF:
@@ -154,7 +153,7 @@ public class SingleCommandParser extends TriangleParserTD {
 			expression = new ExpressionParser(this);
 			exprNode = expression.parse(token);
 			singleCommandNode.addChild(exprNode);
-			if (!TypeChecker.isExpressionBoolean(exprNode)){
+			if (!exprNode.getTypeSpec().equals(booleanType)){
 				errorHandler.flag(token, EXPECTING_BOOLEAN, this);
 			}
 			token = synchronize(THEN, MISSING_THEN,FIRST_FOLLOW_SET);
@@ -174,9 +173,10 @@ public class SingleCommandParser extends TriangleParserTD {
 			expression = new ExpressionParser(this);
 			exprNode = expression.parse(token);
 			testNode.addChild(exprNode);
-			if (!TypeChecker.isExpressionBoolean(exprNode)){
+			if (!exprNode.getTypeSpec().equals(booleanType)){
 				errorHandler.flag(token, EXPECTING_BOOLEAN, this);
 			}
+			token = synchronize(DO, MISSING_DO,FIRST_FOLLOW_SET);
 			singleCommandParser = new SingleCommandParser(this);
 			singleCommandNode.addChild(singleCommandParser.parse(token));
 			break;

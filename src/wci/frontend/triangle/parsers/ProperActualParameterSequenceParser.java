@@ -56,22 +56,14 @@ public class ProperActualParameterSequenceParser extends TriangleParserTD
     public ICodeNode parse(Token token, ArrayList<SymTabEntry> formalParameterSeq) throws Exception {
         ICodeNode properActualParameterSequenceNode = ICodeFactory.createICodeNode(PARAMETERS);
         TriangleTokenType type = null;
-        Iterator<SymTabEntry> formalParamIter = formalParameterSeq.iterator();
+        int index = 0;
         do{
         	token = currentToken();
-        	SymTabEntry formalParam = formalParamIter.hasNext() ? formalParamIter.next() : null; 
+        	SymTabEntry formalParam = formalParameterSeq != null? formalParameterSeq.get(index) : null;
+        	index++;
         	ActualParameterParser actualParameter = new ActualParameterParser(this);
         	ICodeNode paramNode = actualParameter.parse(token, formalParam);
         	properActualParameterSequenceNode.addChild(paramNode);
-        	/*
-        	if (formalParamIter.hasNext()){
-        		if (!TypeChecker.isParameterCompatible(paramNode,formalParamIter.next(),this)){
-        			errorHandler.flag(token, PARAMETER_TYPE_MISMATCH, this);
-        		}
-        	} else {
-        		errorHandler.flag(token, EXISTANCE_FORMAL_PARAMETER, this);
-        	}
-        	*/
         	token = currentToken();
         	if ((type = (TriangleTokenType)token.getType()) == COMMA){
         		token = nextToken(); // absorb comma

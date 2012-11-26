@@ -26,6 +26,7 @@ import static wci.frontend.triangle.TriangleErrorCode.FORMAL_PARAM_NOT_FUNC;
 import static wci.frontend.triangle.TriangleErrorCode.FORMAL_PARAM_NOT_VALUE;
 import static wci.frontend.triangle.TriangleErrorCode.PROC_PARM_MISMATCH;
 import static wci.frontend.triangle.TriangleErrorCode.FUNC_PARM_MISMATCH;
+import static wci.frontend.triangle.TriangleErrorCode.EXPECTING_VARIABLE_PARAM;
 
 /**
  * <h1>Actual Parameter Parser</h1>
@@ -84,27 +85,28 @@ public class ActualParameterParser extends TriangleParserTD {
 
 		switch (tokenType) {
 		case VAR:
-			if (formalParam.getDefinition() != DefinitionImpl.VAR_PARM){
+			if (formalParam != null && formalParam.getDefinition() != DefinitionImpl.VAR_PARM){
 				errorHandler.flag(token, FORMAL_PARAM_NOT_VAR, this);
 			}
 			token = nextToken(); // absorb the var
+			identToken = token;
 			VnameParser vnameParser = new VnameParser(this);
 			ICodeNode varNode = vnameParser.parse(token);
+			SymTabEntry varId = symTabStack.lookup((String)varNode.getAttribute(ID));
+			if (varId != null && varId.getDefinition() != DefinitionImpl.VARIABLE){
+				errorHandler.flag(identToken, EXPECTING_VARIABLE_PARAM, this);
+			}
 			actualParameterNode = ICodeFactory.createICodeNode(VAR_PARM);
 			setLineNumber(actualParameterNode,token);
 			actualParameterNode.addChild(varNode);
-			if (varNode != null){
-				actualParameterNode.setTypeSpec(varNode.getTypeSpec());
-			} else {
-				actualParameterNode.setTypeSpec(undefinedType);
-			}
-			if (formalParam == null || 
+			actualParameterNode.setTypeSpec(varNode.getTypeSpec());
+			if (formalParam != null && 
 					!formalParam.getTypeSpec().equals(actualParameterNode.getTypeSpec())){
-				errorHandler.flag(token, PARAMETER_TYPE_MISMATCH, this);
+				errorHandler.flag(identToken, PARAMETER_TYPE_MISMATCH, this);
 			}
 			break;
 		case PROC:
-			if (formalParam.getDefinition() != DefinitionImpl.PROC_PARM){
+			if (formalParam != null && formalParam.getDefinition() != DefinitionImpl.PROC_PARM){
 				errorHandler.flag(token, FORMAL_PARAM_NOT_PROC, this);
 			}
 			identToken = nextToken(); // absorb the proc
@@ -120,18 +122,18 @@ public class ActualParameterParser extends TriangleParserTD {
 			SymTabEntry procActualParam = symTabStack.lookup(identToken.getText().toLowerCase());
 			if (procActualParam != null){
 				if (procActualParam.getDefinition() != DefinitionImpl.PROCEDURE){
-					errorHandler.flag(token, IDENTIFIER_NOT_PROCEDURE, this);
+					errorHandler.flag(identToken, IDENTIFIER_NOT_PROCEDURE, this);
 				} else {
 					if (!procActualParam.equals(formalParam)){
-						errorHandler.flag(token, PROC_PARM_MISMATCH, this);
+						errorHandler.flag(identToken, PROC_PARM_MISMATCH, this);
 					}
 				}
 			} else {
-				errorHandler.flag(token, PROCEDURE_UNDEFINED, this);
+				errorHandler.flag(identToken, PROCEDURE_UNDEFINED, this);
 			}
 			break;
 		case FUNC:
-			if (formalParam.getDefinition() != DefinitionImpl.FUNC_PARM){
+			if (formalParam != null && formalParam.getDefinition() != DefinitionImpl.FUNC_PARM){
 				errorHandler.flag(token, FORMAL_PARAM_NOT_FUNC, this);
 			}
 			identToken = nextToken(); // absorb the func
@@ -144,20 +146,22 @@ public class ActualParameterParser extends TriangleParserTD {
 			SymTabEntry funcActualParam = symTabStack.lookup(identToken.getText().toLowerCase());
 			if (funcActualParam != null){
 				if (funcActualParam.getDefinition() != DefinitionImpl.FUNCTION){
-					errorHandler.flag(token, IDENTIFIER_NOT_FUNCTION, this);
+					errorHandler.flag(identToken, IDENTIFIER_NOT_FUNCTION, this);
 				} else {
 					actualParameterNode.setTypeSpec(funcActualParam.getTypeSpec());
 					if (!funcActualParam.equals(formalParam)){
-						errorHandler.flag(token, FUNC_PARM_MISMATCH, this);
+						errorHandler.flag(identToken, FUNC_PARM_MISMATCH, this);
 					}
 				}
 			} else {
-				errorHandler.flag(token, FUNCTION_UNDEFINED, this);
+				errorHandler.flag(identToken, FUNCTION_UNDEFINED, this);
 			}
 			break;
 		default:
 			if (ExpressionParser.FIRST_SET.contains(tokenType)){
-				if (formalParam.getDefinition() != DefinitionImpl.VALUE_PARM){
+				identToken = token;
+				if (formalParam != null &&
+						formalParam.getDefinition() != DefinitionImpl.VALUE_PARM){
 					errorHandler.flag(token, FORMAL_PARAM_NOT_VALUE, this);
 				}
 				actualParameterNode = ICodeFactory.createICodeNode(VALUE_PARM);
@@ -170,8 +174,9 @@ public class ActualParameterParser extends TriangleParserTD {
 				} else {
 					actualParameterNode.setTypeSpec(undefinedType);
 				}
-				if (!formalParam.getTypeSpec().equals(actualParameterNode.getTypeSpec())){
-					errorHandler.flag(token, PARAMETER_TYPE_MISMATCH, this);
+				if (formalParam != null && 
+						!formalParam.getTypeSpec().equals(actualParameterNode.getTypeSpec())){
+					errorHandler.flag(identToken, PARAMETER_TYPE_MISMATCH, this);
 				}
 			}
 			else{

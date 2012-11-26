@@ -60,7 +60,7 @@ public class DeclarationParser extends TriangleParserTD {
 		do{
 			SingleDeclarationParser singleDeclaration = new SingleDeclarationParser(this);
 			singleDeclaration.parse(token);
-			synchronize(FOLLOW_SET);
+			synchronize(FIRST_FOLLOW_SET);
 			token = currentToken();
 			tokenType = (TriangleTokenType)token.getType();
 			if (tokenType == SEMICOLON){

@@ -78,7 +78,8 @@ public class SecondaryExpressionParser extends TriangleParserTD {
 		
 		PrimaryExpressionParser primaryExpressionParser = new PrimaryExpressionParser(
 				this);
-		leftOperand = primaryExpressionParser.parse(token);
+		secondaryExpressionNode = primaryExpressionParser.parse(token);
+		leftOperand = secondaryExpressionNode;
 		
 		token = currentToken();
 
@@ -124,7 +125,7 @@ public class SecondaryExpressionParser extends TriangleParserTD {
 			valueParm.addChild(rightOperand);
 			paramNode.addChild(valueParm);
 			
-			if (formalParamList.size() == 2){
+			if (formalParamList != null && formalParamList.size() == 2){
 				if (formalParamList.get(0).getDefinition() != DefinitionImpl.VALUE_PARM){
 					errorHandler.flag(leftOperandToken, NOT_EXPECTING_VALUE_PARM, this);
 				} else if (!formalParamList.get(0).getTypeSpec().equals(leftOperand.getTypeSpec())){
@@ -135,7 +136,7 @@ public class SecondaryExpressionParser extends TriangleParserTD {
 				} else if (!formalParamList.get(1).getTypeSpec().equals(rightOperand.getTypeSpec())){
 					errorHandler.flag(rightOperandToken, OPERAND_TYPE_MISMATCH, this);
 				}
-			} else {
+			} else if (formalParamList != null){
 				errorHandler.flag(token, OPERAND_MISMATCH, this);
 			}
 			
