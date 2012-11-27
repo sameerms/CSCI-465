@@ -115,11 +115,12 @@ public class PrimaryExpressionParser extends TriangleParserTD {
 				ArrayList<SymTabEntry> formalParameterSeq = null;
 				primaryExpressionNode = ICodeFactory.createICodeNode(CALL);
 				ICodeNode paramNode = ICodeFactory.createICodeNode(PARAMETERS);
-				setLineNumber(primaryExpressionNode,token);
+				setLineNumber(primaryExpressionNode, token);
 				primaryExpressionNode.addChild(paramNode);
 				primaryExpressionNode.setAttribute(ID, token.getText());
 				primaryExpressionNode.setTypeSpec(defaultType);
-				SymTabEntry funcId = symTabStack.lookup(token.getText().toLowerCase());
+				SymTabEntry funcId = symTabStack.lookup(token.getText()
+						.toLowerCase());
 				if (funcId != null) {
 					if (funcId.getDefinition() != DefinitionImpl.FUNCTION) {
 						errorHandler.flag(token, IDENTIFIER_NOT_FUNCTION, this);
@@ -132,8 +133,10 @@ public class PrimaryExpressionParser extends TriangleParserTD {
 				token = nextToken(); // absorb left parenthesis
 				ActualParameterSequenceParser actualParameterSeq = new ActualParameterSequenceParser(
 						this);
-				paramNode.addChild(actualParameterSeq.parse(token,formalParameterSeq));
-				token = synchronize(RIGHT_PAREN, MISSING_RIGHT_PAREN, FOLLOW_SET);
+				paramNode.addChild(actualParameterSeq.parse(token,
+						formalParameterSeq));
+				token = synchronize(RIGHT_PAREN, MISSING_RIGHT_PAREN,
+						FOLLOW_SET);
 			} else { // v-name statement
 				VnameParser vname = new VnameParser(this);
 				primaryExpressionNode = vname.parse(token);
@@ -184,13 +187,18 @@ public class PrimaryExpressionParser extends TriangleParserTD {
 					this);
 			ICodeNode operandNode = primaryExpressionParser.parse(token);
 			paramNode.addChild(operandNode);
-			ArrayList<SymTabEntry> formalParamSeq = 
-					(ArrayList<SymTabEntry>)operatorId.getAttribute(SymTabKeyImpl.ROUTINE_PARMS);
-			if (formalParamSeq.size() != 1){
-				errorHandler.flag(token, NUMBER_ACTUAL_FORMAL_NO_MATCH, this);
-			} else {
-				if (!formalParamSeq.get(0).getTypeSpec().equals(operandNode.getTypeSpec())){
-					errorHandler.flag(token, OPERAND_TYPE_MISMATCH, this);
+			if (operatorId != null) {
+				ArrayList<SymTabEntry> formalParamSeq = (ArrayList<SymTabEntry>) operatorId
+						.getAttribute(SymTabKeyImpl.ROUTINE_PARMS);
+
+				if (formalParamSeq.size() != 1) {
+					errorHandler.flag(token, NUMBER_ACTUAL_FORMAL_NO_MATCH,
+							this);
+				} else {
+					if (!formalParamSeq.get(0).getTypeSpec()
+							.equals(operandNode.getTypeSpec())) {
+						errorHandler.flag(token, OPERAND_TYPE_MISMATCH, this);
+					}
 				}
 			}
 			break;

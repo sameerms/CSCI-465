@@ -37,8 +37,8 @@ public class ExpressionTest {
 	public void testPrimaryExpression() {
 		String[] code = {
 				"5 + 6",
-				"\\true"
-				/*"-5",
+				"\\true",
+				"-5",
 				"'v'",
 				"-34",
 				"--34",
@@ -48,6 +48,7 @@ public class ExpressionTest {
 				"(-34",
 				"(-34+v-f+10)",
 				"x",
+				/*
 				"{}",  // test Record-Aggregate
 				"{d~5}",
 				"{~5}",
