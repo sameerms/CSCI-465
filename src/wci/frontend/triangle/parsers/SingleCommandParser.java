@@ -110,13 +110,14 @@ public class SingleCommandParser extends TriangleParserTD {
 				singleCommandNode.addChild(actualParameterSeq.parse(token,formalParameterSeq));
 				token = synchronize(RIGHT_PAREN, MISSING_RIGHT_PAREN,FOLLOW_SET);
 			} else { // assignment statement
+				Token identToken = currentToken();
 				singleCommandNode = ICodeFactory.createICodeNode(ASSIGN);
 				setLineNumber(singleCommandNode, token);
 				VnameParser vname = new VnameParser(this);
 				ICodeNode lhs = vname.parse(token);
 				SymTabEntry identId = symTabStack.lookup((String)lhs.getAttribute(ID));
-				if (identId != null && identId.getDefinition() != DefinitionImpl.VARIABLE){
-					errorHandler.flag(token, ASSERT_IDENTIFIER_VARIABLE, this);
+				if (identId != null && !identId.getDefinition().isAssignable()){
+					errorHandler.flag(identToken, ASSERT_IDENTIFIER_VARIABLE, this);
 				}
 				singleCommandNode.addChild(lhs);
 				token = synchronize(COLON_EQUALS, MISSING_COLON_EQUALS,COLON_EQUAL_SET);
@@ -124,7 +125,7 @@ public class SingleCommandParser extends TriangleParserTD {
 				ICodeNode rhs = expression.parse(token);
 				singleCommandNode.addChild(rhs);
 				if (!lhs.getTypeSpec().equals(rhs.getTypeSpec())){
-					errorHandler.flag(token, ASSIGNMENT_NOT_TYPE_COMPATIBLE, this);
+					errorHandler.flag(identToken, ASSIGNMENT_NOT_TYPE_COMPATIBLE, this);
 				}
 			}
 			break;

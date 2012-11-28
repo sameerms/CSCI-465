@@ -75,7 +75,7 @@ public class ExpressionParser extends TriangleParserTD {
 		
 		switch ((TriangleTokenType) token.getType()) {
 		case LET:
-			expressionNode = ICodeFactory.createICodeNode(BLOCK);
+			expressionNode = ICodeFactory.createICodeNode(EXPRESSION_BLOCK);
 			setLineNumber(expressionNode,token);
 			expressionNode.setAttribute(SYMBOL_TABLE, symTabStack.push());
 			token = nextToken();

@@ -36,6 +36,7 @@ public class ExpressionTest {
 	@Test
 	public void testPrimaryExpression() {
 		String[] code = {
+				/*
 				"5 + 6",
 				"\\true",
 				"-5",
@@ -46,9 +47,8 @@ public class ExpressionTest {
 				"call(",
 				"(-34)",
 				"(-34",
-				"(-34+v-f+10)",
+				"(-34+5-9+10)",
 				"x",
-				/*
 				"{}",  // test Record-Aggregate
 				"{d~5}",
 				"{~5}",
@@ -67,6 +67,15 @@ public class ExpressionTest {
 				"[5,-6,7+9,10+c-f",
 				"let  x ~ 5+6-c+d*4/r; var x  Integer; proc call(z:Boolean)  Begin z := false end; func call(z:Boolean):Boolean ~ ^z x:= 5 ",
 				*/
+				"let\n"+
+				"const d ~ 5; \n"+
+				"const c ~ d*5; \n"+ 
+				"const r ~ 5+6-c+d*4/c; \n" +
+				"proc foo(var z: Integer) ~ Begin z := 5 end; \n"+
+				"func bar(z:Boolean):Boolean ~ \\z /\\ (c*d = r) \n"+
+				"in \n"+
+				"bar(true); \n"+
+				"end ",
 				};
 		SymTabStack symTabStack = parser.getSymTabStack();
 		TrianglePredefined.initialize(symTabStack);

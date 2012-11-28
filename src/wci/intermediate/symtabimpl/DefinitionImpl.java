@@ -13,8 +13,8 @@ import wci.intermediate.Definition;
 public enum DefinitionImpl implements Definition
 {
     CONSTANT, ENUMERATION_CONSTANT("enumeration constant"),
-    TYPE, VARIABLE, FIELD("record field"),
-    VALUE_PARM("value parameter"), VAR_PARM("VAR parameter"),
+    TYPE, VARIABLE(true), FIELD("record field",true),
+    VALUE_PARM("value parameter"), VAR_PARM("VAR parameter",true),
     PROGRAM_PARM("program parameter"),
     FUNC_PARM("function parameter"),
     PROC_PARM("procedure parameter"),
@@ -22,15 +22,26 @@ public enum DefinitionImpl implements Definition
     UNDEFINED;
 
     private String text;
-
+    private boolean isAssignable;
+    
     /**
      * Constructor.
      */
     DefinitionImpl()
     {
         this.text = this.toString().toLowerCase();
+        isAssignable = false;
     }
 
+    /**
+     * Constructor.
+     */
+    DefinitionImpl(boolean isAssignable)
+    {
+        this.text = this.toString().toLowerCase();
+        this.isAssignable = isAssignable;
+    }
+    
     /**
      * Constructor.
      * @param text the text for the definition code.
@@ -38,6 +49,13 @@ public enum DefinitionImpl implements Definition
     DefinitionImpl(String text)
     {
         this.text = text;
+        isAssignable = false;
+    }
+    
+    DefinitionImpl(String text, boolean isAssignable)
+    {
+        this.text = text;
+        this.isAssignable = isAssignable;
     }
 
     /**
@@ -47,5 +65,14 @@ public enum DefinitionImpl implements Definition
     public String getText()
     {
         return text;
+    }
+    
+    /**
+     * Getter.
+     * @return whether this definition is assignable a value.
+     */
+    public boolean isAssignable()
+    {
+    	return isAssignable;
     }
 }

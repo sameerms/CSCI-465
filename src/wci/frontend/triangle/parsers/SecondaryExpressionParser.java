@@ -69,7 +69,6 @@ public class SecondaryExpressionParser extends TriangleParserTD {
 	 */
 	@SuppressWarnings("unchecked")
 	public ICodeNode parse(Token token) throws Exception {
-		ICodeNode secondaryExpressionNode = null;
 		ICodeNode leftOperand = null;
 		ICodeNode rightOperand = null;
 		
@@ -78,8 +77,7 @@ public class SecondaryExpressionParser extends TriangleParserTD {
 		
 		PrimaryExpressionParser primaryExpressionParser = new PrimaryExpressionParser(
 				this);
-		secondaryExpressionNode = primaryExpressionParser.parse(token);
-		leftOperand = secondaryExpressionNode;
+		leftOperand = primaryExpressionParser.parse(token);
 		
 		token = currentToken();
 
@@ -140,15 +138,12 @@ public class SecondaryExpressionParser extends TriangleParserTD {
 				errorHandler.flag(token, OPERAND_MISMATCH, this);
 			}
 			
-			secondaryExpressionNode = opNode;
+			leftOperand = opNode;
 			
 			token = currentToken();
 		}
-
-		// Set the current line number as an attribute.
-		// setLineNumber(statementNode, token);
-
-		return secondaryExpressionNode;
+		
+		return leftOperand;
 	}
 
 	/**

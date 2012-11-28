@@ -3,6 +3,7 @@ package wci.frontend.triangle.parsers;
 import wci.frontend.*;
 import wci.frontend.triangle.*;
 import wci.intermediate.*;
+import wci.intermediate.symtabimpl.SymTabKeyImpl;
 
 import java.util.EnumSet;
 
@@ -80,6 +81,9 @@ public class VnameParser extends TriangleParserTD {
             errorHandler.flag(token, IDENTIFIER_UNDEFINED, this);
         }  else {
         	vnameNode.setTypeSpec(identId.getTypeSpec());
+        	if (identId.getDefinition() == CONSTANT){
+        		vnameNode.setAttribute(VALUE, identId.getAttribute(SymTabKeyImpl.CONSTANT_VALUE));
+        	}
         }
 		
         token = synchronize(IDENTIFIER, TriangleErrorCode.MISSING_IDENTIFIER, FIRST_FOLLOW_SET);

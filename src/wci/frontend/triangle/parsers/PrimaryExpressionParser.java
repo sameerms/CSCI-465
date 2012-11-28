@@ -10,7 +10,6 @@ import wci.intermediate.*;
 import wci.intermediate.symtabimpl.DefinitionImpl;
 import wci.intermediate.symtabimpl.SymTabKeyImpl;
 import wci.intermediate.symtabimpl.TrianglePredefined;
-import wci.intermediate.typeimpl.TypeChecker;
 
 import static wci.frontend.triangle.TriangleErrorCode.*;
 import static wci.frontend.triangle.TriangleTokenType.*;
@@ -114,9 +113,7 @@ public class PrimaryExpressionParser extends TriangleParserTD {
 				token = currentToken();
 				ArrayList<SymTabEntry> formalParameterSeq = null;
 				primaryExpressionNode = ICodeFactory.createICodeNode(CALL);
-				ICodeNode paramNode = ICodeFactory.createICodeNode(PARAMETERS);
 				setLineNumber(primaryExpressionNode, token);
-				primaryExpressionNode.addChild(paramNode);
 				primaryExpressionNode.setAttribute(ID, token.getText());
 				primaryExpressionNode.setTypeSpec(defaultType);
 				SymTabEntry funcId = symTabStack.lookup(token.getText()
@@ -133,7 +130,7 @@ public class PrimaryExpressionParser extends TriangleParserTD {
 				token = nextToken(); // absorb left parenthesis
 				ActualParameterSequenceParser actualParameterSeq = new ActualParameterSequenceParser(
 						this);
-				paramNode.addChild(actualParameterSeq.parse(token,
+				primaryExpressionNode.addChild(actualParameterSeq.parse(token,
 						formalParameterSeq));
 				token = synchronize(RIGHT_PAREN, MISSING_RIGHT_PAREN,
 						FOLLOW_SET);
@@ -164,50 +161,82 @@ public class PrimaryExpressionParser extends TriangleParserTD {
 					FOLLOW_SET);
 			break;
 		case OPERATOR:
-			token = currentToken();
-			primaryExpressionNode = ICodeFactory.createICodeNode(CALL);
-			primaryExpressionNode.setTypeSpec(defaultType);
-			ICodeNode paramNode = ICodeFactory.createICodeNode(PARAMETERS);
-			primaryExpressionNode.addChild(paramNode);
-			setLineNumber(primaryExpressionNode, token);
-			primaryExpressionNode.setAttribute(ID, token.getText());
-			SymTabEntry operatorId = symTabStack.lookup(token.getText()
-					.toLowerCase());
-			if (operatorId != null) {
-				if (operatorId.getDefinition() == DefinitionImpl.FUNCTION) {
-					primaryExpressionNode.setTypeSpec(operatorId.getTypeSpec());
-				} else {
-					errorHandler.flag(token, OPERATOR_NOT_FUNCTION, this);
-				}
+			if (token.getText().equals("-")){
+				primaryExpressionNode = generateSpecialNegateOperator(token);
 			} else {
-				errorHandler.flag(token, OPERATOR_NOT_DEFINED, this);
-			}
-			token = nextToken();
-			PrimaryExpressionParser primaryExpressionParser = new PrimaryExpressionParser(
-					this);
-			ICodeNode operandNode = primaryExpressionParser.parse(token);
-			paramNode.addChild(operandNode);
-			if (operatorId != null) {
-				ArrayList<SymTabEntry> formalParamSeq = (ArrayList<SymTabEntry>) operatorId
-						.getAttribute(SymTabKeyImpl.ROUTINE_PARMS);
-
-				if (formalParamSeq.size() != 1) {
-					errorHandler.flag(token, NUMBER_ACTUAL_FORMAL_NO_MATCH,
-							this);
-				} else {
-					if (!formalParamSeq.get(0).getTypeSpec()
-							.equals(operandNode.getTypeSpec())) {
-						errorHandler.flag(token, OPERAND_TYPE_MISMATCH, this);
-					}
-				}
+				primaryExpressionNode = generateUnaryOperator(token);
 			}
 			break;
 		default:
 			errorHandler.flag(token, MISSING_EXPRESSION, this);
+			primaryExpressionNode = ICodeFactory.createICodeNode(NO_OP);
+			primaryExpressionNode.setTypeSpec(defaultType);
 			break;
 		}
 
 		return primaryExpressionNode;
+	}
+	
+	protected ICodeNode generateSpecialNegateOperator(Token token) throws Exception
+	{
+		// deal with special case of minus (-)
+		ICodeNode primaryExpressionNode = ICodeFactory.createICodeNode(NEGATE);
+		primaryExpressionNode.setTypeSpec(TrianglePredefined.undefinedType);
+		setLineNumber(primaryExpressionNode, token);
+		primaryExpressionNode.setAttribute(ID, token.getText());
+		token = nextToken();
+		PrimaryExpressionParser primaryExpressionParser = new PrimaryExpressionParser(
+				this);
+		ICodeNode operandNode = primaryExpressionParser.parse(token);
+		primaryExpressionNode.addChild(operandNode);
+		if (operandNode.equals(integerType)){
+			errorHandler.flag(token, OPERAND_TYPE_MISMATCH, this);
+		}
+		return primaryExpressionNode;
+	}
+	
+	protected ICodeNode generateUnaryOperator(Token token) throws Exception
+	{
+		token = currentToken();
+		ICodeNode primaryExpressionNode = ICodeFactory.createICodeNode(CALL);
+		primaryExpressionNode.setTypeSpec(TrianglePredefined.undefinedType);
+		ICodeNode paramNode = ICodeFactory.createICodeNode(PARAMETERS);
+		primaryExpressionNode.addChild(paramNode);
+		setLineNumber(primaryExpressionNode, token);
+		primaryExpressionNode.setAttribute(ID, token.getText());
+		SymTabEntry operatorId = symTabStack.lookup(token.getText()
+				.toLowerCase());
+		if (operatorId != null) {
+			if (operatorId.getDefinition() == DefinitionImpl.FUNCTION) {
+				primaryExpressionNode.setTypeSpec(operatorId.getTypeSpec());
+			} else {
+				errorHandler.flag(token, OPERATOR_NOT_FUNCTION, this);
+			}
+		} else {
+			errorHandler.flag(token, OPERATOR_NOT_DEFINED, this);
+		}
+		token = nextToken();
+		PrimaryExpressionParser primaryExpressionParser = new PrimaryExpressionParser(
+				this);
+		ICodeNode operandNode = primaryExpressionParser.parse(token);
+		paramNode.addChild(operandNode);
+		if (operatorId != null) {
+			@SuppressWarnings("unchecked")
+			ArrayList<SymTabEntry> formalParamSeq = (ArrayList<SymTabEntry>) operatorId
+					.getAttribute(SymTabKeyImpl.ROUTINE_PARMS);
+			if (formalParamSeq.size() != 1) {
+				errorHandler.flag(token, NUMBER_ACTUAL_FORMAL_NO_MATCH,
+						this);
+			} else {
+				if (!formalParamSeq.get(0).getTypeSpec()
+						.equals(operandNode.getTypeSpec())) {
+					errorHandler.flag(token, OPERAND_TYPE_MISMATCH, this);
+				}
+			}
+		}
+		
+		return primaryExpressionNode;
+		
 	}
 
 	/**

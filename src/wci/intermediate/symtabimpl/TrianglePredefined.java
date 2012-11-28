@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import wci.intermediate.*;
+import wci.intermediate.icodeimpl.ICodeNodeTypeImpl;
 
 import static wci.intermediate.icodeimpl.ICodeKeyImpl.ID;
 import static wci.intermediate.icodeimpl.ICodeNodeTypeImpl.ADD;
@@ -21,6 +22,7 @@ import static wci.intermediate.icodeimpl.ICodeNodeTypeImpl.OR;
 import static wci.intermediate.icodeimpl.ICodeNodeTypeImpl.SUBTRACT;
 import static wci.intermediate.icodeimpl.ICodeNodeTypeImpl.NOT;
 import static wci.intermediate.icodeimpl.ICodeNodeTypeImpl.VARIABLE;
+import static wci.intermediate.icodeimpl.ICodeNodeTypeImpl.NEGATE;
 import static wci.intermediate.symtabimpl.SymTabKeyImpl.*;
 import static wci.intermediate.symtabimpl.TrianglePredefined.undefinedType;
 import static wci.intermediate.typeimpl.TypeFormImpl.*;
