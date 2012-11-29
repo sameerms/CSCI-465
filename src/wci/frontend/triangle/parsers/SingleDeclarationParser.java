@@ -221,7 +221,7 @@ public class SingleDeclarationParser extends TriangleParserTD {
 			token = synchronize(TILDE, MISSING_TILDE, syncSet);
 			typeDenoter = new TypeDenoterParser(this);
 			TypeSpec typeType = typeDenoter.parse(token);
-			SymTabEntry typeId = symTabStack.lookup(identifierToken.getText().toLowerCase());
+			SymTabEntry typeId = symTabStack.lookupLocal(identifierToken.getText().toLowerCase());
 			// Enter the new identifier into the symbol table
             // but don't set how it's defined yet.
             if (typeId == null) {

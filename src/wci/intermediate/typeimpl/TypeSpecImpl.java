@@ -1,8 +1,11 @@
 package wci.intermediate.typeimpl;
 
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 
 import wci.intermediate.*;
+import wci.intermediate.symtabimpl.DefinitionImpl;
 
 import static wci.intermediate.typeimpl.TypeFormImpl.ARRAY;
 import static wci.intermediate.typeimpl.TypeFormImpl.SUBRANGE;
@@ -124,5 +127,61 @@ public class TypeSpecImpl
     {
         return form == SUBRANGE ? (TypeSpec) getAttribute(SUBRANGE_BASE_TYPE)
                                 : this;
+    }
+    
+    /**
+     * Returns a true if this TypeSpec is structurally equivalent with obj.
+     * 
+     * @param obj the TypeSpec instance to compare this TypeSpec instance to
+     * @return true if this TypeSpec is structurally equivalent with obj, otherwise false.
+     */
+    @SuppressWarnings("unchecked")
+	@Override
+    public boolean equals(Object obj)
+    {
+    	if (this == obj){
+    		return true;
+    	}
+    	if (obj == null){
+    		return false;
+    	}
+    	if (!(obj instanceof TypeSpec)){
+    		return false;
+    	}
+    	TypeSpec otherType = (TypeSpec)obj;
+    	if (this.getForm() != otherType.getForm()){
+    		return false;
+    	}
+    	
+    	boolean isEqual =true;
+    	
+    	if (this.getForm()==TypeFormImpl.SCALAR) {
+    		isEqual = false;
+    	} else if (this.getForm()==TypeFormImpl.ARRAY) {
+    		TypeSpec thisIndexType = (TypeSpec)this.getAttribute(ARRAY_INDEX_TYPE);
+    		TypeSpec otherIndexType = (TypeSpec)otherType.getAttribute(ARRAY_INDEX_TYPE);
+    		TypeSpec thisElementType = (TypeSpec)this.getAttribute(ARRAY_ELEMENT_TYPE);
+    		TypeSpec otherElementType = (TypeSpec)otherType.getAttribute(ARRAY_ELEMENT_TYPE);
+    		int thisElementCount = (int)this.getAttribute(ARRAY_ELEMENT_COUNT);
+    		int otherElementCount = (int)otherType.getAttribute(ARRAY_ELEMENT_COUNT);
+    		isEqual =  thisElementCount==otherElementCount && 
+    				      thisElementType.equals(otherElementType) && 
+    				          thisIndexType.equals(otherIndexType);
+    	} else if (this.getForm()==TypeFormImpl.RECORD) {
+    		List<SymTabEntry> thisFields = (List<SymTabEntry>)this.getAttribute(TypeKeyImpl.RECORD_FIELD_LIST);
+    		List<SymTabEntry> otherFields = (List<SymTabEntry>)otherType.getAttribute(TypeKeyImpl.RECORD_FIELD_LIST);
+    		Iterator<SymTabEntry> thisIter = thisFields.iterator();
+    		Iterator<SymTabEntry> otherIter = otherFields.iterator();
+    		while(isEqual && thisIter.hasNext() && otherIter.hasNext()){
+    			SymTabEntry thisEntry = thisIter.next();
+    			SymTabEntry otherEntry = otherIter.next();
+    			if(!thisEntry.getTypeSpec().equals(otherEntry.getTypeSpec())){
+    				isEqual = false;
+    			}
+    		}
+    		isEqual = isEqual && !thisIter.hasNext() && !otherIter.hasNext();
+    	}
+    	
+    	return isEqual;
     }
 }

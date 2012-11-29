@@ -124,7 +124,7 @@ public class SingleCommandParser extends TriangleParserTD {
 				expression = new ExpressionParser(this);
 				ICodeNode rhs = expression.parse(token);
 				singleCommandNode.addChild(rhs);
-				if (!lhs.getTypeSpec().equals(rhs.getTypeSpec())){
+ 				if (!lhs.getTypeSpec().equals(rhs.getTypeSpec())){
 					errorHandler.flag(identToken, ASSIGNMENT_NOT_TYPE_COMPATIBLE, this);
 				}
 			}

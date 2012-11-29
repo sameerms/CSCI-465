@@ -51,4 +51,12 @@ public interface TypeSpec
      * @return the base type of this type.
      */
     public TypeSpec baseType();
+    
+    /**
+     * Returns a true if this TypeSpec is structurally equivalent with obj.
+     * 
+     * @param obj the TypeSpec instance to compare this TypeSpec instance to
+     * @return true if this TypeSpec is structurally equivalent with obj, otherwise false.
+     */
+    public boolean equals(Object obj);
 }

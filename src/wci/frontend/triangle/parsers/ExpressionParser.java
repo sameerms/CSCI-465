@@ -5,6 +5,7 @@ import java.util.EnumSet;
 import wci.frontend.*;
 import wci.frontend.triangle.*;
 import wci.intermediate.*;
+import wci.intermediate.symtabimpl.TrianglePredefined;
 import wci.intermediate.typeimpl.TypeChecker;
 
 import static wci.frontend.triangle.TriangleErrorCode.*;
@@ -95,7 +96,7 @@ public class ExpressionParser extends TriangleParserTD {
 			expression = new ExpressionParser(this);
 			ICodeNode testNode = expression.parse(token);
 			expressionNode.addChild(testNode);
-			if (!TypeChecker.isExpressionBoolean(testNode)){
+			if (!testNode.getTypeSpec().equals(TrianglePredefined.booleanType)){
 				errorHandler.flag(token, EXPECTING_BOOLEAN, this);
 			}
 			token = synchronize(THEN, MISSING_THEN, ExpressionParser.FIRST_FOLLOW_SET);
@@ -108,7 +109,7 @@ public class ExpressionParser extends TriangleParserTD {
 			expression = new ExpressionParser(this);
 			ICodeNode elseExprNode = expression.parse(token);
 			expressionNode.addChild(elseExprNode);
-			if (!TypeChecker.isAssignmentCompatible(thenExprNode,elseExprNode)){
+			if (!thenExprNode.getTypeSpec().equals(elseExprNode.getTypeSpec())){
 				errorHandler.flag(token, ElSE_TYPE_MISMATCH, this);
 			}
 			break;

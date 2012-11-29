@@ -95,8 +95,7 @@ public class PrimaryExpressionParser extends TriangleParserTD {
 					FOLLOW_SET);
 			break;
 		case CHAR:
-			Character charValue = Character.valueOf(token.getText().trim()
-					.charAt(0));
+			Character charValue = (Character)token.getValue();
 			primaryExpressionNode = ICodeFactory.createICodeNode(CHAR_CONSTANT);
 			primaryExpressionNode.setAttribute(VALUE, charValue);
 			setLineNumber(primaryExpressionNode, token);

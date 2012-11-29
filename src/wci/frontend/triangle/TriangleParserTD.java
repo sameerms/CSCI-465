@@ -86,7 +86,7 @@ public class TriangleParserTD extends Parser {
         TrianglePredefined.initialize(symTabStack);
 
         // Create a dummy program identifier symbol table entry.
-        routineId = symTabStack.enterLocal("DummyProgramName".toLowerCase());
+        routineId = symTabStack.enterLocal("0Main Program".toLowerCase());
         routineId.setDefinition(DefinitionImpl.PROGRAM);
         symTabStack.setProgramId(routineId);
 

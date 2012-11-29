@@ -31,7 +31,8 @@ public class ProgramICodeTest {
 	public void testProgram() {
 		String[] code = {
 				/*"x := -5;\n x := x + (z - 5) / y"
-				"if (x <= -5) then x := x + 5 else x := x + 1",*/
+				"if (x <= -5) then x := x + 5 else x := x + 1",
+				"let const d ~ 5; type int ~ Integer; var x:int; var y:integer in x := y",
 				"let const m ~ 5; \n"+
 				"var x: integer; \n"+
 				"proc foo (var y : integer) ~ \n"+
@@ -42,8 +43,20 @@ public class ProgramICodeTest {
 				"x := x/5 * x \\/ true;\n"+
 				"foo(proc foo);\n"+
 				"end;"
-				
+				*/
 				//"let var x:integer in x := x *2"
+				"let\n"+
+				"type int ~ integer;"+
+				"type Info ~ Record\n"+
+				"  name : array 3 of char, \n"+
+				"  salary : int \n"+
+				"end; \n"+
+				"var salInfo : Info\n"+
+				"in \n"+
+				"Begin\n"+
+				"salInfo := {name ~ ['W','e','s'], salary ~ 25000};\n"+
+				"salInfo.name := ['B','A','P']; \n"+
+				"end"
 				};
 		for (String s : code) {
 			StringReader st = new StringReader(s);
@@ -73,7 +86,6 @@ public class ProgramICodeTest {
 	                                         new ParseTreePrinter(System.out);
 	                    treePrinter.print(symTabStack);
 	                }
-
 	                //backend.process(iCode, symTabStack);
 	            }
 			} catch (Exception e) {

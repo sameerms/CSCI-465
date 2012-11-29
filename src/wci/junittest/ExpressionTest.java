@@ -66,7 +66,7 @@ public class ExpressionTest {
 				"[5,-6,7+9,10c-f]",
 				"[5,-6,7+9,10+c-f",
 				"let  x ~ 5+6-c+d*4/r; var x  Integer; proc call(z:Boolean)  Begin z := false end; func call(z:Boolean):Boolean ~ ^z x:= 5 ",
-				*/
+				
 				"let\n"+
 				"const d ~ 5; \n"+
 				"const c ~ d*5; \n"+ 
@@ -76,6 +76,9 @@ public class ExpressionTest {
 				"in \n"+
 				"bar(true); \n"+
 				"end ",
+				*/
+				"if (true) then false else 5",
+				"if (true) then false else true",
 				};
 		SymTabStack symTabStack = parser.getSymTabStack();
 		TrianglePredefined.initialize(symTabStack);

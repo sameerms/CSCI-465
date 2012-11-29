@@ -83,7 +83,7 @@ public class RecordTypeDenoterParser extends TriangleParserTD {
             // but don't set how it's defined yet.
             if (variableId == null) {
             	variableId = symTabStack.enterLocal(name);
-            	variableId.setDefinition(DefinitionImpl.VARIABLE);
+            	variableId.setDefinition(DefinitionImpl.FIELD);
             	variableId.appendLineNumber(identifierToken.getLineNumber());
             	variableId.setTypeSpec(identifierType);
             }
