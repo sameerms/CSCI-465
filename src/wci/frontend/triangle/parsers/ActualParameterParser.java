@@ -1,32 +1,49 @@
 package wci.frontend.triangle.parsers;
 
-import wci.frontend.*;
-import wci.frontend.triangle.*;
-import wci.intermediate.*;
-import wci.intermediate.symtabimpl.DefinitionImpl;
-
-import java.util.EnumSet;
-
-import static wci.frontend.triangle.TriangleTokenType.*;
-import static wci.intermediate.icodeimpl.ICodeKeyImpl.*;
+import static wci.frontend.triangle.TriangleErrorCode.EXPECTING_VARIABLE_PARAM;
+import static wci.frontend.triangle.TriangleErrorCode.FORMAL_PARAM_NOT_FUNC;
+import static wci.frontend.triangle.TriangleErrorCode.FORMAL_PARAM_NOT_PROC;
+import static wci.frontend.triangle.TriangleErrorCode.FORMAL_PARAM_NOT_VALUE;
+import static wci.frontend.triangle.TriangleErrorCode.FORMAL_PARAM_NOT_VAR;
+import static wci.frontend.triangle.TriangleErrorCode.FUNCTION_UNDEFINED;
+import static wci.frontend.triangle.TriangleErrorCode.FUNC_PARM_MISMATCH;
+import static wci.frontend.triangle.TriangleErrorCode.IDENTIFIER_NOT_FUNCTION;
+import static wci.frontend.triangle.TriangleErrorCode.IDENTIFIER_NOT_PROCEDURE;
+import static wci.frontend.triangle.TriangleErrorCode.MISSING_ACTUAL_PARAMETER;
+import static wci.frontend.triangle.TriangleErrorCode.PARAMETER_TYPE_MISMATCH;
+import static wci.frontend.triangle.TriangleErrorCode.PROCEDURE_UNDEFINED;
+import static wci.frontend.triangle.TriangleErrorCode.PROC_PARM_MISMATCH;
+import static wci.frontend.triangle.TriangleTokenType.CHAR;
+import static wci.frontend.triangle.TriangleTokenType.COMMA;
+import static wci.frontend.triangle.TriangleTokenType.FUNC;
+import static wci.frontend.triangle.TriangleTokenType.IDENTIFIER;
+import static wci.frontend.triangle.TriangleTokenType.INTEGER;
+import static wci.frontend.triangle.TriangleTokenType.LEFT_BRACE;
+import static wci.frontend.triangle.TriangleTokenType.LEFT_BRACKET;
+import static wci.frontend.triangle.TriangleTokenType.LEFT_PAREN;
+import static wci.frontend.triangle.TriangleTokenType.LET;
+import static wci.frontend.triangle.TriangleTokenType.OPERATOR;
+import static wci.frontend.triangle.TriangleTokenType.PROC;
+import static wci.frontend.triangle.TriangleTokenType.RIGHT_PAREN;
+import static wci.frontend.triangle.TriangleTokenType.VAR;
+import static wci.intermediate.icodeimpl.ICodeKeyImpl.ID;
+import static wci.intermediate.icodeimpl.ICodeKeyImpl.LINE;
 import static wci.intermediate.icodeimpl.ICodeNodeTypeImpl.FUNC_PARM;
 import static wci.intermediate.icodeimpl.ICodeNodeTypeImpl.PROC_PARM;
 import static wci.intermediate.icodeimpl.ICodeNodeTypeImpl.VALUE_PARM;
 import static wci.intermediate.icodeimpl.ICodeNodeTypeImpl.VAR_PARM;
 import static wci.intermediate.symtabimpl.TrianglePredefined.undefinedType;
-import static wci.frontend.triangle.TriangleErrorCode.MISSING_ACTUAL_PARAMETER;
-import static wci.frontend.triangle.TriangleErrorCode.PROCEDURE_UNDEFINED;
-import static wci.frontend.triangle.TriangleErrorCode.IDENTIFIER_NOT_PROCEDURE;
-import static wci.frontend.triangle.TriangleErrorCode.IDENTIFIER_NOT_FUNCTION;
-import static wci.frontend.triangle.TriangleErrorCode.FUNCTION_UNDEFINED;
-import static wci.frontend.triangle.TriangleErrorCode.FORMAL_PARAM_NOT_VAR;
-import static wci.frontend.triangle.TriangleErrorCode.PARAMETER_TYPE_MISMATCH;
-import static wci.frontend.triangle.TriangleErrorCode.FORMAL_PARAM_NOT_PROC;
-import static wci.frontend.triangle.TriangleErrorCode.FORMAL_PARAM_NOT_FUNC;
-import static wci.frontend.triangle.TriangleErrorCode.FORMAL_PARAM_NOT_VALUE;
-import static wci.frontend.triangle.TriangleErrorCode.PROC_PARM_MISMATCH;
-import static wci.frontend.triangle.TriangleErrorCode.FUNC_PARM_MISMATCH;
-import static wci.frontend.triangle.TriangleErrorCode.EXPECTING_VARIABLE_PARAM;
+
+import java.util.EnumSet;
+
+import wci.frontend.Token;
+import wci.frontend.triangle.TriangleErrorCode;
+import wci.frontend.triangle.TriangleParserTD;
+import wci.frontend.triangle.TriangleTokenType;
+import wci.intermediate.ICodeFactory;
+import wci.intermediate.ICodeNode;
+import wci.intermediate.SymTabEntry;
+import wci.intermediate.symtabimpl.DefinitionImpl;
 
 /**
  * <h1>Actual Parameter Parser</h1>
@@ -93,7 +110,7 @@ public class ActualParameterParser extends TriangleParserTD {
 			VnameParser vnameParser = new VnameParser(this);
 			ICodeNode varNode = vnameParser.parse(token);
 			SymTabEntry varId = symTabStack.lookup((String)varNode.getAttribute(ID));
-			if (varId != null && varId.getDefinition() != DefinitionImpl.VARIABLE){
+			if (varId != null && !varId.getDefinition().isAssignable()){
 				errorHandler.flag(identToken, EXPECTING_VARIABLE_PARAM, this);
 			}
 			actualParameterNode = ICodeFactory.createICodeNode(VAR_PARM);

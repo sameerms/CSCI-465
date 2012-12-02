@@ -176,6 +176,12 @@ public class CrossReferencer
                 break;
             }
         }
+        if (definition == DefinitionImpl.FUNCTION || definition == DefinitionImpl.PROCEDURE){
+        	SymTab s = (SymTab)entry.getAttribute(ROUTINE_SYMTAB);
+        	System.out.println("------------------- BEGIN Routine Symbol Table ------------------------");
+        	printSymTab(s,new ArrayList<TypeSpec>());
+        	System.out.println("------------------- END Routine Symbol Table ------------------------");
+        }
     }
 
     /**

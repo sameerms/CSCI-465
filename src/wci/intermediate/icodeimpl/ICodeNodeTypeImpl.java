@@ -30,6 +30,9 @@ public enum ICodeNodeTypeImpl implements ICodeNodeType
 
     // Multiplicative operators
     MULTIPLY, INTEGER_DIVIDE, FLOAT_DIVIDE, MOD, AND,
+    
+    //standard routines
+    EOF, EOL, GET, PUT, GETINT, PUTINT, GETEOL, PUTEOL,
 
     // Operands
     VARIABLE, SUBSCRIPTS, FIELD, CHAR_CONSTANT,

@@ -7,22 +7,7 @@ import wci.intermediate.*;
 import wci.intermediate.icodeimpl.ICodeNodeTypeImpl;
 
 import static wci.intermediate.icodeimpl.ICodeKeyImpl.ID;
-import static wci.intermediate.icodeimpl.ICodeNodeTypeImpl.ADD;
-import static wci.intermediate.icodeimpl.ICodeNodeTypeImpl.AND;
-import static wci.intermediate.icodeimpl.ICodeNodeTypeImpl.EQ;
-import static wci.intermediate.icodeimpl.ICodeNodeTypeImpl.GE;
-import static wci.intermediate.icodeimpl.ICodeNodeTypeImpl.GT;
-import static wci.intermediate.icodeimpl.ICodeNodeTypeImpl.INTEGER_DIVIDE;
-import static wci.intermediate.icodeimpl.ICodeNodeTypeImpl.LE;
-import static wci.intermediate.icodeimpl.ICodeNodeTypeImpl.LT;
-import static wci.intermediate.icodeimpl.ICodeNodeTypeImpl.MOD;
-import static wci.intermediate.icodeimpl.ICodeNodeTypeImpl.MULTIPLY;
-import static wci.intermediate.icodeimpl.ICodeNodeTypeImpl.NE;
-import static wci.intermediate.icodeimpl.ICodeNodeTypeImpl.OR;
-import static wci.intermediate.icodeimpl.ICodeNodeTypeImpl.SUBTRACT;
-import static wci.intermediate.icodeimpl.ICodeNodeTypeImpl.NOT;
-import static wci.intermediate.icodeimpl.ICodeNodeTypeImpl.VARIABLE;
-import static wci.intermediate.icodeimpl.ICodeNodeTypeImpl.NEGATE;
+import static wci.intermediate.icodeimpl.ICodeNodeTypeImpl.*;
 import static wci.intermediate.symtabimpl.SymTabKeyImpl.*;
 import static wci.intermediate.symtabimpl.TrianglePredefined.undefinedType;
 import static wci.intermediate.typeimpl.TypeFormImpl.*;
@@ -71,6 +56,8 @@ public class TrianglePredefined
 		STANDARD_ENVIRONMENT.put(">", GT);
 		STANDARD_ENVIRONMENT.put(">=", GE);
 		STANDARD_ENVIRONMENT.put("\\", NOT);
+		STANDARD_ENVIRONMENT.put("eof", EOF);
+		STANDARD_ENVIRONMENT.put("eol", EOL);
  	}
  	
 
@@ -161,9 +148,25 @@ public class TrianglePredefined
     	//Boolean operators
     	binaryOperator(symTabStack,"\\/",booleanType,booleanType,booleanType);
     	binaryOperator(symTabStack,"/\\",booleanType,booleanType,booleanType);
-    	//char functions
-    	unaryOperator(symTabStack,"chr",integerType,charType);
-    	unaryOperator(symTabStack,"ord",charType,integerType);
+    	
+    	noParamRoutine(symTabStack,"eof",DefinitionImpl.FUNCTION,booleanType);
+    	noParamRoutine(symTabStack,"eol",DefinitionImpl.FUNCTION,booleanType);
+    	noParamRoutine(symTabStack,"geteol",DefinitionImpl.PROCEDURE,undefinedType);
+    	noParamRoutine(symTabStack,"puteol",DefinitionImpl.PROCEDURE,undefinedType);
+    	
+    	routineWithSingleParam(symTabStack,"chr",DefinitionImpl.FUNCTION, 
+    			DefinitionImpl.VALUE_PARM, integerType,charType);
+    	routineWithSingleParam(symTabStack,"ord",DefinitionImpl.FUNCTION, 
+    			DefinitionImpl.VALUE_PARM, charType,integerType);
+    	routineWithSingleParam(symTabStack,"get", DefinitionImpl.PROCEDURE, 
+    			DefinitionImpl.VAR_PARM, charType, undefinedType);
+    	routineWithSingleParam(symTabStack,"put", DefinitionImpl.PROCEDURE, 
+    			DefinitionImpl.VALUE_PARM, charType, undefinedType);
+    	routineWithSingleParam(symTabStack,"getint", DefinitionImpl.PROCEDURE, 
+    			DefinitionImpl.VAR_PARM, integerType, undefinedType);
+    	routineWithSingleParam(symTabStack,"putint", DefinitionImpl.PROCEDURE, 
+    			DefinitionImpl.VALUE_PARM, integerType, undefinedType);
+    	
     }
     
     private static SymTabEntry createRoutineSymEntry(SymTabStack symTabStack, String name, Definition def, TypeSpec returnType)
@@ -189,6 +192,26 @@ public class TrianglePredefined
         paramId.setDefinition(def);
  		paramId.setTypeSpec(type);
  		((ArrayList<SymTabEntry>)routineId.getAttribute(ROUTINE_PARMS)).add(paramId);
+    }
+    
+    private static void noParamRoutine(SymTabStack symTabStack, String opString, Definition def, TypeSpec returnType)
+    {
+    	SymTabEntry routineId = createRoutineSymEntry(symTabStack, opString,def,returnType);
+    	ICodeNode node = ICodeFactory.createICodeNode(STANDARD_ENVIRONMENT.get(opString));
+    	((ICode)routineId.getAttribute(ROUTINE_ICODE)).setRoot(node);
+    }
+    
+    private static void routineWithSingleParam(SymTabStack symTabStack, String opString, Definition routineDef,
+    		Definition paramDef, TypeSpec operandType, TypeSpec returnType)
+    {
+    	SymTabEntry routineId = createRoutineSymEntry(symTabStack, opString, routineDef,returnType);
+    	addFormalParam(routineId, "p", operandType, paramDef);
+    	ICodeNode vnameNode = ICodeFactory.createICodeNode(VARIABLE);
+		vnameNode.setAttribute(ID, "p");
+		vnameNode.setTypeSpec(operandType);
+    	ICodeNode opNode = ICodeFactory.createICodeNode(STANDARD_ENVIRONMENT.get(opString));
+    	opNode.addChild(vnameNode);
+    	((ICode)routineId.getAttribute(ROUTINE_ICODE)).setRoot(opNode);
     }
     
     private static void unaryOperator(SymTabStack symTabStack, String opString, TypeSpec operandType, 
