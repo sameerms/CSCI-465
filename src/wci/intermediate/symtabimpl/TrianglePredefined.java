@@ -58,6 +58,12 @@ public class TrianglePredefined
 		STANDARD_ENVIRONMENT.put("\\", NOT);
 		STANDARD_ENVIRONMENT.put("eof", EOF);
 		STANDARD_ENVIRONMENT.put("eol", EOL);
+		STANDARD_ENVIRONMENT.put("get", GET);
+		STANDARD_ENVIRONMENT.put("put", PUT);
+		STANDARD_ENVIRONMENT.put("getint", GETINT);
+		STANDARD_ENVIRONMENT.put("putint", PUTINT);
+		STANDARD_ENVIRONMENT.put("geteol", GETEOL);
+		STANDARD_ENVIRONMENT.put("puteof", PUTEOL);
  	}
  	
 

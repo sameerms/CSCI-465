@@ -40,7 +40,7 @@ public class DeclarationTest {
 		String[] code = {
 				/*"const x ~ 5+6",
 				"var y : Integer",*/
-				"proc foo(var z:Boolean) ~ Begin z := false end",
+				"proc foo(z:Boolean) ~ Begin z := false end",
 				"func call(z:Boolean):Integer ~ 5",
 				/*
 				

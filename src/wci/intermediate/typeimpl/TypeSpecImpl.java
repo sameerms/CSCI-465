@@ -162,8 +162,8 @@ public class TypeSpecImpl
     		TypeSpec otherIndexType = (TypeSpec)otherType.getAttribute(ARRAY_INDEX_TYPE);
     		TypeSpec thisElementType = (TypeSpec)this.getAttribute(ARRAY_ELEMENT_TYPE);
     		TypeSpec otherElementType = (TypeSpec)otherType.getAttribute(ARRAY_ELEMENT_TYPE);
-    		int thisElementCount = (int)this.getAttribute(ARRAY_ELEMENT_COUNT);
-    		int otherElementCount = (int)otherType.getAttribute(ARRAY_ELEMENT_COUNT);
+    		int thisElementCount = (Integer)this.getAttribute(ARRAY_ELEMENT_COUNT);
+    		int otherElementCount = (Integer)otherType.getAttribute(ARRAY_ELEMENT_COUNT);
     		isEqual =  thisElementCount==otherElementCount && 
     				      thisElementType.equals(otherElementType) && 
     				          thisIndexType.equals(otherIndexType);

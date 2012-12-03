@@ -55,7 +55,7 @@ public class ProgramICodeTest {
 				"in \n"+
 				"Begin\n"+
 				"salInfo := {name ~ ['W','e','s'], salary ~ 25000};\n"+
-				"salInfo.name := ['B','A','P']; \n"+
+				"salInfo.name := ['B','A']; \n"+
 				"end"
 				};
 		for (String s : code) {
